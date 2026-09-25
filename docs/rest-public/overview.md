@@ -1,5 +1,5 @@
 ---
-title: Public REST
+title: Get Started
 ---
 
 **Unofficial.** The Reports and Recommendations API is the only LDP API meant for external clients. It is read-only, returns HAL/HATEOAS JSON, and is authenticated with an LDP access token.

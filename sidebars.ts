@@ -60,7 +60,7 @@ const sidebars: SidebarsConfig = {
 						? [
 								{
 									items: reference,
-									label: 'Reference',
+									label: 'Endpoints',
 									type: 'category' as const,
 								},
 							]
