@@ -1,0 +1,51 @@
+info:
+  title: DSR Analytics API (unofficial)
+  description: |
+    **Unofficial.** Analytics for Digital Sales Room (DSR) rooms, served by a DXP that is connected to LDP. See the DSR overview for authentication and conventions.
+servers:
+  - url: https://{host}/o/site-dsr-analytics-rest/v1.0
+    description: The DXP instance that hosts the DSR site
+    variables:
+      host:
+        default: dxp.example.com
+security:
+  - basicAuth: []
+  - bearerAuth: []
+components:
+  securitySchemes:
+    basicAuth:
+      type: http
+      scheme: basic
+      description: A DXP user that owns the rooms or is a company administrator.
+    bearerAuth:
+      type: http
+      scheme: bearer
+      description: A DXP OAuth2 access token.
+paths:
+  /documents-metric:
+    get:
+      summary: Document metrics for rooms
+  /events:
+    get:
+      summary: Latest events in rooms
+  /identity-activity:
+    get:
+      summary: Activity count for rooms
+  /most-active-visitors:
+    get:
+      summary: Most active visitors of rooms
+  /sessions-site-histogram-metric:
+    get:
+      summary: Sessions over time
+  /site-visitor-behavior-metric:
+    get:
+      summary: Visitor behavior summary
+  /user-sessions:
+    get:
+      summary: Events grouped by user session
+  /visit-frequency:
+    get:
+      summary: Visit frequency distribution
+  /visitors-site-histogram-metric:
+    get:
+      summary: Visitors over time
