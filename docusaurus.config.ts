@@ -17,6 +17,7 @@ const apiConfig: Record<string, OpenApiPlugin.Options> = Object.fromEntries(
 			group.dir,
 			{
 				hideSendButton: true,
+				showInfoPage: false,
 				outputDir: `docs/${group.dir}/reference`,
 				sidebarOptions: {
 					categoryLinkSource: 'tag',

@@ -4,7 +4,7 @@ info:
   version: "2026-09-22"
   summary: Community reference for the Liferay Data Platform (LDP) Reports and Recommendations API.
   description: |
-    **Unofficial.** Reference for the LDP Reports and Recommendations API. See the Public REST overview for authentication and conventions.
+    **Unofficial.** Reference for the LDP Reports and Recommendations API. See Get Started for authentication and conventions.
   license:
     name: CC BY 4.0
     url: https://creativecommons.org/licenses/by/4.0/

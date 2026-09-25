@@ -4,6 +4,14 @@ title: Get Started
 
 **Unofficial.** The Reports and Recommendations API is the only LDP API meant for external clients. It is read-only, returns HAL/HATEOAS JSON, and is authenticated with an LDP access token.
 
+| | |
+|---|---|
+| **Base URL** | `https://<ldp-host>` (for example `https://ldp.liferay.com`) |
+| **Authentication** | HTTP Bearer: an LDP access token |
+| **Format** | JSON (HAL/HATEOAS) |
+| **Reference version** | 2026-09-22 |
+| **License** | This guide is [CC BY 4.0](https://creativecommons.org/licenses/by/4.0/) |
+
 ## Get a Token
 
 1. Log in to LDP as a workspace **Administrator** or **Owner**.
