@@ -1,0 +1,951 @@
+openapi: 3.1.0
+info:
+  title: LDP Reports API (unofficial)
+  version: "2026-09-22"
+  summary: Community reference for the Liferay Data Platform (LDP) Reports and Recommendations API.
+  description: |
+    **Unofficial.** Reference for the LDP Reports and Recommendations API. See the Public REST overview for authentication and conventions.
+  license:
+    name: CC BY 4.0
+    url: https://creativecommons.org/licenses/by/4.0/
+servers:
+  - url: https://{host}
+    description: LDP host (the one that serves the LDP web UI and issued the token)
+    variables:
+      host:
+        default: ldp.liferay.com
+security:
+  - bearerAuth: []
+tags:
+  - name: Index
+    description: Discovery links.
+  - name: Pages
+  - name: Blogs
+  - name: Documents and Media
+  - name: Forms
+  - name: Web Contents
+  - name: Individuals
+  - name: Segments
+  - name: Export
+    description: Asynchronous bulk data export (ZIP).
+  - name: Recommendations
+paths:
+  /api/reports:
+    get:
+      tags: [Index]
+      operationId: getReportsIndex
+      summary: List the available report resources
+      responses:
+        "200":
+          description: HATEOAS index.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/LinksOnly"
+              example:
+                _links:
+                  pages:
+                    href: https://ldp.liferay.com/api/reports/pages{?channelId,page,experienceId,keywords,rangeKey,sortMetric,sortOrder}
+                    templated: true
+                  segments:
+                    href: https://ldp.liferay.com/api/reports/segments{?channelId,page}
+                    templated: true
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+
+  /api/reports/pages:
+    get:
+      tags: [Pages]
+      operationId: getPages
+      summary: List pages with their metrics
+      parameters:
+        - $ref: "#/components/parameters/channelId"
+        - $ref: "#/components/parameters/page"
+        - $ref: "#/components/parameters/keywords"
+        - $ref: "#/components/parameters/rangeKey"
+        - name: sortMetric
+          in: query
+          schema:
+            $ref: "#/components/schemas/PageMetricName"
+            default: viewsMetric
+        - $ref: "#/components/parameters/sortOrder"
+        - $ref: "#/components/parameters/experienceId"
+      responses:
+        "200":
+          description: A page of page reports.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/PageReportList"
+              example:
+                results:
+                  - title: Home
+                    url: https://www.example.com/home
+                    metrics:
+                      viewsMetric: {previousValue: 12.0, value: 21.0}
+                      visitorsMetric: {previousValue: 1.0, value: 3.0}
+                      avgTimeOnPageMetric: {previousValue: 0.0, value: 48213.5}
+                    _links:
+                      self:
+                        href: https://ldp.liferay.com/api/reports/pages/aHR0cHM6Ly93d3cuZXhhbXBsZS5jb20vaG9tZQ%3D%3D?pageTitle=Home&rangeKey=30{&experienceId}
+                        templated: true
+                total: 3
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "500":
+          $ref: "#/components/responses/InvalidRangeKey"
+
+  /api/reports/pages/{pageURL}:
+    get:
+      tags: [Pages]
+      operationId: getPage
+      summary: Get one page's metrics
+      description: |
+        `pageURL` is the page URL encoded as **Base64-URL without `=` padding**.
+
+        ```bash
+        printf "%s" "https://www.example.com/home" | base64 --wrap=0 | tr "+/" "-_" | tr --delete "="
+        ```
+
+        The padded value returned in list `self` links currently fails; strip the padding.
+      parameters:
+        - name: pageURL
+          in: path
+          required: true
+          schema: {type: string}
+          example: aHR0cHM6Ly93d3cuZXhhbXBsZS5jb20vaG9tZQ
+        - name: pageTitle
+          in: query
+          schema: {type: string}
+        - $ref: "#/components/parameters/rangeKey"
+        - $ref: "#/components/parameters/experienceId"
+        - $ref: "#/components/parameters/expand"
+      responses:
+        "200":
+          description: The page report.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/PageReport"
+              example:
+                title: Home
+                url: https://www.example.com/home
+                metrics:
+                  viewsMetric:
+                    previousValue: 12.0
+                    value: 21.0
+                    histogram:
+                      buckets:
+                        - {key: "2026-09-15T00:00", value: 4.0}
+                        - {key: "2026-09-16T00:00", value: 17.0}
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+
+  /api/reports/blogs:
+    get:
+      tags: [Blogs]
+      operationId: getBlogs
+      summary: List blogs with their metrics
+      parameters:
+        - $ref: "#/components/parameters/channelId"
+        - $ref: "#/components/parameters/page"
+        - $ref: "#/components/parameters/keywords"
+        - $ref: "#/components/parameters/rangeKey"
+        - name: sortMetric
+          in: query
+          schema:
+            type: string
+            enum: [clicksMetric, commentsMetric, ratingsMetric, readingTimeMetric, viewsMetric]
+            default: viewsMetric
+        - $ref: "#/components/parameters/sortOrder"
+      responses:
+        "200":
+          $ref: "#/components/responses/AssetReportList"
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+
+  /api/reports/blogs/{blogId}:
+    get:
+      tags: [Blogs]
+      operationId: getBlog
+      summary: Get one blog's metrics
+      parameters:
+        - {name: blogId, in: path, required: true, schema: {type: string}}
+        - {name: blogTitle, in: query, schema: {type: string}}
+        - $ref: "#/components/parameters/rangeKey"
+        - $ref: "#/components/parameters/expand"
+      responses:
+        "200":
+          $ref: "#/components/responses/AssetReport"
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+
+  /api/reports/documents-and-media:
+    get:
+      tags: [Documents and Media]
+      operationId: getDocuments
+      summary: List documents with their metrics
+      parameters:
+        - $ref: "#/components/parameters/channelId"
+        - $ref: "#/components/parameters/page"
+        - $ref: "#/components/parameters/keywords"
+        - $ref: "#/components/parameters/rangeKey"
+        - name: sortMetric
+          in: query
+          schema:
+            type: string
+            enum: [commentsMetric, downloadsMetric, impressionMadeMetric, lastViewedMetric, previewsMetric, ratingsMetric, usersInvolvedMetric]
+            default: downloadsMetric
+        - $ref: "#/components/parameters/sortOrder"
+      responses:
+        "200":
+          $ref: "#/components/responses/AssetReportList"
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+
+  /api/reports/documents-and-media/{documentId}:
+    get:
+      tags: [Documents and Media]
+      operationId: getDocument
+      summary: Get one document's metrics
+      parameters:
+        - {name: documentId, in: path, required: true, schema: {type: string}}
+        - {name: documentTitle, in: query, schema: {type: string}}
+        - $ref: "#/components/parameters/rangeKey"
+        - $ref: "#/components/parameters/expand"
+      responses:
+        "200":
+          $ref: "#/components/responses/AssetReport"
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+
+  /api/reports/forms:
+    get:
+      tags: [Forms]
+      operationId: getForms
+      summary: List forms with their metrics
+      parameters:
+        - $ref: "#/components/parameters/channelId"
+        - $ref: "#/components/parameters/page"
+        - $ref: "#/components/parameters/keywords"
+        - $ref: "#/components/parameters/rangeKey"
+        - name: sortMetric
+          in: query
+          schema:
+            type: string
+            enum: [abandonmentsMetric, completionTimeMetric, submissionsMetric, viewsMetric]
+            default: submissionsMetric
+        - $ref: "#/components/parameters/sortOrder"
+      responses:
+        "200":
+          description: A page of form reports.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/AssetReportList"
+              example:
+                results:
+                  - id: form-1
+                    title: Contact Us
+                    metrics:
+                      viewsMetric: {previousValue: 0.0, value: 2.0}
+                      submissionsMetric: {previousValue: 0.0, value: 1.0}
+                      abandonmentsMetric: {previousValue: 0.0, value: 1.0}
+                      completionTimeMetric: {previousValue: 0.0, value: 0.0}
+                    _links:
+                      self:
+                        href: https://ldp.liferay.com/api/reports/forms/form-1?formTitle=Contact%20Us&rangeKey=30
+                total: 2
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+
+  /api/reports/forms/{formId}:
+    get:
+      tags: [Forms]
+      operationId: getForm
+      summary: Get one form's metrics
+      parameters:
+        - {name: formId, in: path, required: true, schema: {type: string}}
+        - {name: formTitle, in: query, schema: {type: string}}
+        - $ref: "#/components/parameters/rangeKey"
+        - $ref: "#/components/parameters/expand"
+      responses:
+        "200":
+          $ref: "#/components/responses/AssetReport"
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+
+  /api/reports/web-contents:
+    get:
+      tags: [Web Contents]
+      operationId: getWebContents
+      summary: List web contents with their metrics
+      parameters:
+        - $ref: "#/components/parameters/channelId"
+        - $ref: "#/components/parameters/page"
+        - $ref: "#/components/parameters/keywords"
+        - $ref: "#/components/parameters/rangeKey"
+        - name: sortMetric
+          in: query
+          schema:
+            type: string
+            enum: [viewsMetric]
+            default: viewsMetric
+        - $ref: "#/components/parameters/sortOrder"
+      responses:
+        "200":
+          $ref: "#/components/responses/AssetReportList"
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+
+  /api/reports/web-contents/{webContentId}:
+    get:
+      tags: [Web Contents]
+      operationId: getWebContent
+      summary: Get one web content's metrics
+      parameters:
+        - {name: webContentId, in: path, required: true, schema: {type: string}}
+        - {name: webContentTitle, in: query, schema: {type: string}}
+        - $ref: "#/components/parameters/rangeKey"
+        - $ref: "#/components/parameters/expand"
+      responses:
+        "200":
+          $ref: "#/components/responses/AssetReport"
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+
+  /api/reports/individuals:
+    get:
+      tags: [Individuals]
+      operationId: getIndividuals
+      summary: Search individuals
+      parameters:
+        - $ref: "#/components/parameters/channelId"
+        - $ref: "#/components/parameters/page"
+        - {name: query, in: query, description: Free-text search., schema: {type: string}}
+      responses:
+        "200":
+          description: A page of individuals.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/IndividualList"
+              example:
+                results:
+                  - id: 9f86d081884c7d659a2feaa0c55ad015a3bf4f1b2b0b822cd15d6c15b0f00a08
+                    demographics:
+                      email: jane.doe@example.com
+                      givenName: Jane
+                      familyName: Doe
+                      jobTitle: Marketing Manager
+                      createDate: "2026-01-15T10:00:00.000Z"
+                    custom: {}
+                    _links:
+                      self: {href: "https://ldp.liferay.com/api/reports/individuals/9f86d0..."}
+                      activities: {href: "https://ldp.liferay.com/api/reports/individuals/9f86d0.../activities{?channelId,page}", templated: true}
+                      interests: {href: "https://ldp.liferay.com/api/reports/individuals/9f86d0.../interests{?channelId,page}", templated: true}
+                      segments: {href: "https://ldp.liferay.com/api/reports/individuals/9f86d0.../segments"}
+                total: 250
+                _links:
+                  next: {href: "https://ldp.liferay.com/api/reports/individuals?page=1&query="}
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+
+  /api/reports/individuals/{individualId}:
+    get:
+      tags: [Individuals]
+      operationId: getIndividual
+      summary: Get one individual
+      parameters:
+        - $ref: "#/components/parameters/individualId"
+      responses:
+        "200":
+          description: The individual.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Individual"
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+
+  /api/reports/individuals/{individualId}/activities:
+    get:
+      tags: [Individuals]
+      operationId: getIndividualActivities
+      summary: List an individual's activities (always the last 30 days)
+      parameters:
+        - $ref: "#/components/parameters/individualId"
+        - $ref: "#/components/parameters/channelId"
+        - $ref: "#/components/parameters/page"
+      responses:
+        "200":
+          description: A page of activities.
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: "#/components/schemas/ListEnvelope"
+                  - properties:
+                      results:
+                        type: array
+                        items: {$ref: "#/components/schemas/Activity"}
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+
+  /api/reports/individuals/{individualId}/interests:
+    get:
+      tags: [Individuals]
+      operationId: getIndividualInterests
+      summary: List an individual's interests
+      parameters:
+        - $ref: "#/components/parameters/individualId"
+        - $ref: "#/components/parameters/channelId"
+        - $ref: "#/components/parameters/page"
+      responses:
+        "200":
+          description: A page of interests.
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: "#/components/schemas/ListEnvelope"
+                  - properties:
+                      results:
+                        type: array
+                        items: {$ref: "#/components/schemas/Interest"}
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+
+  /api/reports/individuals/{individualId}/segments:
+    get:
+      tags: [Individuals]
+      operationId: getIndividualSegments
+      summary: List the segments an individual belongs to (not paginated)
+      parameters:
+        - $ref: "#/components/parameters/individualId"
+      responses:
+        "200":
+          description: The individual's segments.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ListEnvelope"
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+
+  /api/reports/segments:
+    get:
+      tags: [Segments]
+      operationId: getSegments
+      summary: List segments
+      parameters:
+        - $ref: "#/components/parameters/channelId"
+        - $ref: "#/components/parameters/page"
+      responses:
+        "200":
+          description: A page of segments.
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: "#/components/schemas/ListEnvelope"
+                  - properties:
+                      results:
+                        type: array
+                        items: {$ref: "#/components/schemas/Segment"}
+              example:
+                results:
+                  - id: "123456789"
+                    name: Example Segment
+                    segmentType: BATCH
+                    dateCreated: "2026-01-15T10:00:00.000Z"
+                    includeAnonymousUsers: false
+                    individualCount: 120
+                    knownIndividualCount: 80
+                    _links:
+                      self: {href: "https://ldp.liferay.com/api/reports/segments/123456789"}
+                      individuals: {href: "https://ldp.liferay.com/api/reports/segments/123456789/individuals?page=0{&channelId,query}", templated: true}
+                total: 2
+                _links:
+                  next: {href: "https://ldp.liferay.com/api/reports/segments?page=1"}
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+
+  /api/reports/segments/{segmentId}:
+    get:
+      tags: [Segments]
+      operationId: getSegment
+      summary: Get one segment
+      parameters:
+        - {name: segmentId, in: path, required: true, schema: {type: string}}
+      responses:
+        "200":
+          description: The segment.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Segment"
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+
+  /api/reports/segments/{segmentId}/individuals:
+    get:
+      tags: [Segments]
+      operationId: getSegmentIndividuals
+      summary: List a segment's members
+      parameters:
+        - {name: segmentId, in: path, required: true, schema: {type: string}}
+        - $ref: "#/components/parameters/channelId"
+        - $ref: "#/components/parameters/page"
+        - {name: query, in: query, schema: {type: string}}
+      responses:
+        "200":
+          description: A page of individuals.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/IndividualList"
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+
+  /api/reports/export/{type}:
+    get:
+      tags: [Export]
+      operationId: exportData
+      summary: Request or download a bulk data export
+      description: |
+        Asynchronous. The first call creates an export task and returns its status as JSON. Poll the **same URL** until the response is `application/zip`. A completed export is reused for one day for the same type and date range.
+
+        ```bash
+        while true; do
+          type=$(curl -s -o export.bin -w "%{content_type}" -H "Authorization: Bearer $LDP_TOKEN" "$URL")
+          [[ "$type" == application/zip* ]] && mv export.bin export.zip && break
+          jq -r '.status + ": " + .message' export.bin; sleep 60
+        done
+        ```
+      parameters:
+        - name: type
+          in: path
+          required: true
+          schema:
+            type: string
+            enum: [event, identity, individual, membership, page, segment]
+        - name: fromDate
+          in: query
+          required: true
+          description: ISO 8601, UTC.
+          schema: {type: string}
+          example: "2026-09-01T00:00:00.000Z"
+        - name: toDate
+          in: query
+          required: true
+          description: ISO 8601, UTC. Must not be before `fromDate`.
+          schema: {type: string}
+          example: "2026-09-08T00:00:00.000Z"
+      responses:
+        "200":
+          description: Export status while pending/running, or the ZIP file once completed.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ExportStatus"
+              example:
+                type: PAGE
+                status: PENDING
+                message: A new data export file for this date range and type will be created. Please come back later.
+                fromDate: "2026-09-01T00:00:00.000Z"
+                toDate: "2026-09-08T00:00:00.000Z"
+                createdDate: "2026-01-15T10:00:00.000Z"
+            application/zip:
+              schema: {type: string, format: binary}
+        "400":
+          description: Invalid type, missing or malformed dates, or `fromDate` after `toDate`.
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+
+  /api/recommendations:
+    get:
+      tags: [Recommendations]
+      operationId: getRecommendationsIndex
+      summary: Recommendations discovery links
+      responses:
+        "200":
+          description: HATEOAS index.
+          content:
+            application/json:
+              schema: {$ref: "#/components/schemas/LinksOnly"}
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+
+  /api/recommendations/models:
+    get:
+      tags: [Recommendations]
+      operationId: getRecommendationModels
+      summary: List recommendation models
+      parameters:
+        - $ref: "#/components/parameters/page"
+        - $ref: "#/components/parameters/keywords"
+      responses:
+        "200":
+          description: A page of models.
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: "#/components/schemas/ListEnvelope"
+                  - properties:
+                      results:
+                        type: array
+                        items: {$ref: "#/components/schemas/RecommendationModel"}
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+
+  /api/recommendations/models/{modelId}:
+    get:
+      tags: [Recommendations]
+      operationId: getRecommendationModel
+      summary: Get one recommendation model
+      parameters:
+        - $ref: "#/components/parameters/modelId"
+      responses:
+        "200":
+          description: The model.
+          content:
+            application/json:
+              schema: {$ref: "#/components/schemas/RecommendationModel"}
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+
+  /api/recommendations/models/{modelId}/page-recommendations:
+    get:
+      tags: [Recommendations]
+      operationId: getPageRecommendations
+      summary: List a model's page recommendations
+      parameters:
+        - $ref: "#/components/parameters/modelId"
+        - $ref: "#/components/parameters/page"
+      responses:
+        "200":
+          description: A page of page recommendations.
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: "#/components/schemas/ListEnvelope"
+                  - properties:
+                      results:
+                        type: array
+                        items: {$ref: "#/components/schemas/PageRecommendation"}
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+
+  /api/recommendations/models/{modelId}/page-recommendations/{recommendationId}:
+    get:
+      tags: [Recommendations]
+      operationId: getPageRecommendation
+      summary: Get one page recommendation
+      parameters:
+        - $ref: "#/components/parameters/modelId"
+        - {name: recommendationId, in: path, required: true, schema: {type: string}}
+      responses:
+        "200":
+          description: The page recommendation.
+          content:
+            application/json:
+              schema: {$ref: "#/components/schemas/PageRecommendation"}
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+
+  /api/recommendations/page-recommendations:
+    post:
+      tags: [Recommendations]
+      operationId: findPageRecommendation
+      summary: Get the recommendations for a given page URL
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [modelId, url]
+              properties:
+                modelId: {type: string}
+                url: {type: string, format: uri}
+            example:
+              modelId: "123456789"
+              url: https://www.example.com/home
+      responses:
+        "200":
+          description: The page recommendation for that URL.
+          content:
+            application/json:
+              schema: {$ref: "#/components/schemas/PageRecommendation"}
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+
+components:
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+      description: Access token generated in LDP under Settings → APIs → Access Tokens.
+
+  parameters:
+    channelId:
+      name: channelId
+      in: query
+      description: Restrict results to one channel (property). Omit for all channels.
+      schema: {type: integer, format: int64}
+    page:
+      name: page
+      in: query
+      description: Zero-based page index. Page size is fixed at 20.
+      schema: {type: integer, minimum: 0, default: 0}
+    keywords:
+      name: keywords
+      in: query
+      description: Filter by title keywords.
+      schema: {type: string, default: ""}
+    sortOrder:
+      name: sortOrder
+      in: query
+      schema: {type: string, enum: [asc, desc], default: desc}
+    experienceId:
+      name: experienceId
+      in: query
+      schema: {type: string}
+    individualId:
+      name: individualId
+      in: path
+      required: true
+      schema: {type: string}
+    modelId:
+      name: modelId
+      in: path
+      required: true
+      schema: {type: string}
+    rangeKey:
+      name: rangeKey
+      in: query
+      description: |
+        Fixed time range. Any other value returns 500.
+
+        | Value | Range |
+        |---|---|
+        | `-2` | Today |
+        | `-1` | Full period (13 months) |
+        | `0` | Last 24 hours |
+        | `1` | Yesterday |
+        | `7` | Last 7 days |
+        | `28` | Last 28 days |
+        | `30` | Last 30 days |
+        | `90` | Last 90 days |
+        | `180` | Last 180 days |
+        | `365` | Last year |
+      schema:
+        type: integer
+        enum: [-2, -1, 0, 1, 7, 28, 30, 90, 180, 365]
+        default: 30
+    expand:
+      name: expand
+      in: query
+      description: Extra breakdowns, repeatable (`expand=histogram&expand=device`). `histogram` returns daily buckets. `device` and `location` have been observed to return 500.
+      style: form
+      explode: true
+      schema:
+        type: array
+        items:
+          type: string
+          enum: [audience, browser, device, histogram, location]
+
+  responses:
+    Unauthorized:
+      description: Missing, invalid, expired, or revoked token. Empty body.
+    InvalidRangeKey:
+      description: Unsupported `rangeKey`. Returns an HTML error page.
+    AssetReport:
+      description: The asset report.
+      content:
+        application/json:
+          schema: {$ref: "#/components/schemas/AssetReport"}
+    AssetReportList:
+      description: A page of asset reports.
+      content:
+        application/json:
+          schema: {$ref: "#/components/schemas/AssetReportList"}
+
+  schemas:
+    Link:
+      type: object
+      properties:
+        href: {type: string}
+        templated: {type: boolean, description: "When true, `href` is a URI template; remove the `{...}` part."}
+    Links:
+      type: object
+      additionalProperties: {$ref: "#/components/schemas/Link"}
+    LinksOnly:
+      type: object
+      properties:
+        _links: {$ref: "#/components/schemas/Links"}
+    ListEnvelope:
+      type: object
+      properties:
+        results: {type: array, items: {}}
+        total: {type: integer, description: Total number of items across all pages.}
+        _links:
+          allOf: [{$ref: "#/components/schemas/Links"}]
+          description: Contains `next` and/or `prev` when there are more pages.
+    ErrorResult:
+      type: object
+      description: Returned with HTTP 200 for some failures, such as an unknown `/api/reports/{x}` path.
+      properties:
+        status: {type: string, enum: [ERROR]}
+        message: {type: string}
+    Histogram:
+      type: object
+      properties:
+        buckets:
+          type: array
+          items:
+            type: object
+            properties:
+              key: {type: string, description: Bucket start (UTC).}
+              value: {type: number}
+    Breakdown:
+      type: object
+      properties:
+        name: {type: string}
+        value: {type: number}
+        previousValue: {type: number}
+    Metric:
+      type: object
+      properties:
+        value: {type: number}
+        previousValue: {type: number, description: Value for the previous equivalent period.}
+        trend:
+          type: object
+          properties:
+            percentage: {type: number}
+            trendClassification: {type: string}
+        histogram: {$ref: "#/components/schemas/Histogram"}
+        browsers: {type: array, items: {$ref: "#/components/schemas/Breakdown"}}
+        devices: {type: array, items: {$ref: "#/components/schemas/Breakdown"}}
+        locations: {type: array, items: {$ref: "#/components/schemas/Breakdown"}}
+    PageMetricName:
+      type: string
+      enum: [avgTimeOnPageMetric, bounceMetric, bounceRateMetric, ctaClicksMetric, directAccessMetric, entrancesMetric, exitRateMetric, indirectAccessMetric, readsMetric, sessionsMetric, timeOnPageMetric, viewsMetric, visitorsMetric]
+    Metrics:
+      type: object
+      description: Map of metric name (e.g. `viewsMetric`) to its values.
+      additionalProperties: {$ref: "#/components/schemas/Metric"}
+    AssetReport:
+      type: object
+      properties:
+        id: {type: string}
+        title: {type: string}
+        metrics: {$ref: "#/components/schemas/Metrics"}
+        _links: {$ref: "#/components/schemas/Links"}
+    AssetReportList:
+      allOf:
+        - $ref: "#/components/schemas/ListEnvelope"
+        - properties:
+            results:
+              type: array
+              items: {$ref: "#/components/schemas/AssetReport"}
+    PageReport:
+      type: object
+      properties:
+        url: {type: string}
+        title: {type: string}
+        metrics: {$ref: "#/components/schemas/Metrics"}
+        _links: {$ref: "#/components/schemas/Links"}
+    PageReportList:
+      allOf:
+        - $ref: "#/components/schemas/ListEnvelope"
+        - properties:
+            results:
+              type: array
+              items: {$ref: "#/components/schemas/PageReport"}
+    Individual:
+      type: object
+      properties:
+        id: {type: string}
+        demographics:
+          type: object
+          description: Profile fields synced from the data source (email, givenName, familyName, jobTitle, birthDate, createDate, modifiedDate, userId, contactId, uuid, timeZoneId, groupIds, roleIds, organizationIds, teamIds, userGroupIds, ...).
+          additionalProperties: {type: string}
+        custom:
+          type: object
+          description: Custom attributes.
+          additionalProperties: true
+        _links: {$ref: "#/components/schemas/Links"}
+    IndividualList:
+      allOf:
+        - $ref: "#/components/schemas/ListEnvelope"
+        - properties:
+            results:
+              type: array
+              items: {$ref: "#/components/schemas/Individual"}
+    Activity:
+      type: object
+      properties:
+        id: {type: string}
+        applicationId: {type: string}
+        eventId: {type: string}
+        eventContext: {type: object, additionalProperties: true}
+        eventProperties: {type: object, additionalProperties: true}
+        ownerId: {type: string}
+        startTime: {type: string}
+    Interest:
+      type: object
+      properties:
+        channelId: {type: string}
+        identityId: {type: string}
+        keyword: {type: string}
+        interested: {type: boolean}
+        interestScore: {type: number}
+        dateRecorded: {type: string}
+    Segment:
+      type: object
+      properties:
+        id: {type: string}
+        name: {type: string}
+        segmentType: {type: string, examples: [BATCH]}
+        dateCreated: {type: string, format: date-time}
+        includeAnonymousUsers: {type: boolean}
+        individualCount: {type: integer}
+        knownIndividualCount: {type: integer}
+        _links: {$ref: "#/components/schemas/Links"}
+    ExportStatus:
+      type: object
+      properties:
+        type: {type: string, examples: [PAGE]}
+        status: {type: string, enum: [PENDING, RUNNING, ERROR, COMPLETED]}
+        message: {type: string}
+        fromDate: {type: string}
+        toDate: {type: string}
+        createdDate: {type: string}
+        startedDate: {type: string}
+    RecommendationModel:
+      type: object
+      properties:
+        id: {type: string}
+        name: {type: string}
+        jobType: {type: string}
+        jobParameters: {type: object, additionalProperties: true}
+        jobRunFrequency: {type: string}
+        jobRunDataPeriod: {type: string}
+        status: {type: string}
+        _links: {$ref: "#/components/schemas/Links"}
+    PageRecommendation:
+      type: object
+      properties:
+        url: {type: string}
+        title: {type: string}
+        description: {type: string}
+        keywords: {type: array, items: {type: string}}
+        recommendedPages:
+          type: array
+          items: {$ref: "#/components/schemas/PageRecommendation"}
+        _links: {$ref: "#/components/schemas/Links"}
