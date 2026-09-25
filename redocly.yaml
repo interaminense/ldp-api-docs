@@ -1,2 +1,5 @@
 extends:
   - minimal
+rules:
+  no-unused-components: error
+  tag-description: error

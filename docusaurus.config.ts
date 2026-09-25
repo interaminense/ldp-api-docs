@@ -38,7 +38,6 @@ const graphqlPlugins = graphqlGroup
 					docOptions: {
 						index: true,
 					},
-					force: true,
 					homepage: false,
 					loaders: {
 						GraphQLFileLoader: '@graphql-tools/graphql-file-loader',

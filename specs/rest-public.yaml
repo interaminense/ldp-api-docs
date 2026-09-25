@@ -20,15 +20,23 @@ tags:
   - name: Index
     description: Discovery links.
   - name: Pages
+    description: Page metrics, ranked or for a single page.
   - name: Blogs
+    description: Blog metrics, ranked or for a single blog.
   - name: Documents and Media
+    description: Document metrics, ranked or for a single document.
   - name: Forms
+    description: Form metrics, ranked or for a single form.
   - name: Web Contents
+    description: Web content metrics, ranked or for a single web content.
   - name: Individuals
+    description: Known and anonymous individuals, with their activities, interests, and segments.
   - name: Segments
+    description: Segments and their members.
   - name: Export
     description: Asynchronous bulk data export (ZIP).
   - name: Recommendations
+    description: Recommendation models and the pages they recommend.
 paths:
   /api/reports:
     get:
@@ -796,12 +804,6 @@ components:
         _links:
           allOf: [{$ref: "#/components/schemas/Links"}]
           description: Contains `next` and/or `prev` when there are more pages.
-    ErrorResult:
-      type: object
-      description: Returned with HTTP 200 for some failures, such as an unknown `/api/reports/{x}` path.
-      properties:
-        status: {type: string, enum: [ERROR]}
-        message: {type: string}
     Histogram:
       type: object
       properties:
