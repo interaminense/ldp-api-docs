@@ -1,0 +1,5 @@
+.docusaurus/
+build/
+docs/*/reference/
+node_modules/
+specs/graphql/public-schema.graphql
