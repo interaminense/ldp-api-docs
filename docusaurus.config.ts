@@ -130,7 +130,7 @@ const config: Config = {
 	themes: ['docusaurus-theme-openapi-docs'],
 	title: TITLE,
 	trailingSlash: false,
-	url: 'https://interaminense.github.io',
+	url: 'https://interaminense.dev',
 };
 
 export default config;
