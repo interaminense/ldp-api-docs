@@ -1,0 +1,1062 @@
+schema {
+  query: QueryType
+  mutation: MutationType
+}
+
+type AccountName {
+  id: String
+  name: String
+}
+
+type AccountNameBag {
+  accountNames: [AccountName]
+  total: Int
+}
+
+type AcquisitionProperty {
+  name: String
+  value: String
+}
+
+enum AcquisitionType {
+  CHANNEL
+  REFERRER
+  SOURCE_MEDIUM
+}
+
+type ActiveVisitor {
+  activitiesCount: Int
+  emailAddress: String
+  firstName: String
+  id: String
+  lastName: String
+}
+
+type Activity {
+  applicationId: String
+  eventContext: String
+  eventId: String
+  eventProperties: String
+  ownerId: String
+  startTime: String
+}
+
+type ActivityBag {
+  activities: [Activity]
+  total: Int
+}
+
+enum AnalysisType {
+  AVERAGE
+  TOTAL
+  UNIQUE
+}
+
+interface AssetMetric {
+  assetId: String
+  assetMetrics: [AssetMetric]
+  assetTitle: String
+  assetType: String
+  dataSourceId: String
+  defaultMetric: Metric
+  selectedMetrics: [Metric]
+  urls: [String]
+}
+
+type AssetMetricBag {
+  assetMetrics: [AssetMetric]
+  total: Int
+}
+
+type AssetSummaryMetric {
+  assetId: String
+  assetTitle: String
+  assetType: String
+  downloadsMetric: Metric
+  impressionsMetric: Metric
+  objectType: String
+  readsMetric: Metric
+  viewsMetric: Metric
+}
+
+type AssetSummaryMetricBag {
+  assetSummaryMetrics: [AssetSummaryMetric]
+  total: Int
+}
+
+enum AssetType {
+  BLOG
+  DOCUMENT
+  FORM
+  JOURNAL
+  OBJECT_ENTRY
+  PAGE
+}
+
+enum AttributeType {
+  EVENT
+  INDIVIDUAL
+  USER_SESSION
+}
+
+type AudienceReport {
+  anonymousUsersCount: Int
+  knownUsersCount: Int
+  nonsegmentedKnownUsersCount: Int
+  segmentedAnonymousUsersCount: Int
+  segmentedKnownUsersCount: Int
+}
+
+type BaseDXPEntity implements DXPEntity {
+  dataSourceName: String
+  id: String
+  name: String
+}
+
+type BlockedCustomEventDefinition {
+  hidden: Boolean
+  id: String
+  lastSeenDate: String
+  lastSeenURL: String
+  name: String
+}
+
+type BlockedCustomEventDefinitionBag {
+  blockedCustomEventDefinitions: [BlockedCustomEventDefinition]
+  total: Int
+}
+
+type BlogMetric implements AssetMetric {
+  assetId: String
+  assetMetrics: [AssetMetric]
+  assetTitle: String
+  assetType: String
+  canonicalUrls: [String]
+  commentsMetric: Metric
+  dataSourceId: String
+  defaultMetric: Metric
+  selectedMetrics: [Metric]
+  ratingsMetric: Metric
+  readingTimeMetric: Metric
+  urls: [String]
+  viewsMetric: Metric
+}
+
+type BreakdownItem {
+  breakdownItems: [BreakdownItem]
+  leafNode: Boolean
+  name: String
+  previousValue: Float
+  value: Float
+}
+
+type CampaignTouch {
+  campaignId: String!
+  campaignName: String!
+  origin: String!
+  touches: [CampaignTouchMember!]!
+  touchesCount: Int!
+}
+
+type CampaignTouchDay {
+  campaignsCount: Int!
+  date: String!
+  items: [CampaignTouch!]!
+  touchesCount: Int!
+}
+
+type CampaignTouchMember {
+  individualId: String
+  individualName: String!
+  jobTitle: String
+  status: String
+}
+
+type CohortHeatMapMetric {
+  colDimension: String
+  retention: Float
+  rowDimension: String
+  rowKey: String
+  value: Float
+}
+
+type CohortMetric {
+  anonymousCohortHeatMapMetrics: [CohortHeatMapMetric]
+  knownCohortHeatMapMetrics: [CohortHeatMapMetric]
+  visitorsCohortHeatMapMetrics: [CohortHeatMapMetric]
+}
+
+type Composition {
+  name: String
+  count: Int
+}
+
+type CompositionBag {
+  compositions: [Composition]
+  maxCount: Int
+  total: Int
+  totalCount: Int
+}
+
+interface DXPEntity {
+  dataSourceName: String
+  id: String
+  name: String
+}
+
+type DXPEntityBag {
+  dxpEntities: [DXPEntity]
+  total: Int
+}
+
+input DXPVariantSettings {
+  control: Boolean!
+  dxpVariantId: String!
+  trafficSplit: Float!
+}
+
+type Dashboard {
+  assetId: String
+  assetTitle: String
+  category: String
+  createDate: String
+  definition: String
+  id: String
+  modifiedByUserName: String
+  modifiedDate: String
+}
+
+type DashboardBag {
+  dashboards: [Dashboard]
+  total: Int
+}
+
+type DataControlTask {
+  batchId: String
+  completeDate: String
+  createDate: String
+  emailAddresses: [String]
+  id: String
+  ownerId: String
+  startDate: String
+  status: String
+  type: String
+}
+
+type DataControlTaskBag {
+  dataControlTasks: [DataControlTask]
+  total: Int
+}
+
+enum DataControlTaskStatus {
+  COMPLETED
+  ERROR
+  EXPIRED
+  PENDING
+  RUNNING
+}
+
+enum DataControlTaskType {
+  ACCESS
+  DELETE
+  SUPPRESS
+  UNSUPPRESS
+}
+
+type DataSource {
+  contactsSyncDetails: DataSourceSyncDetail
+  id: String
+  name: String
+  sitesSyncDetails: DataSourceSyncDetail
+  url: String
+}
+
+enum DataSourceConfigurationStatus {
+  CONFIGURED
+  UNCONFIGURED
+}
+
+type DataSourceSyncDetail {
+  count: Int
+  lastSyncDate: String
+  selected: Boolean
+}
+
+enum DateGrouping {
+  DAY
+  MONTH
+  YEAR
+}
+
+type DocumentMetric implements AssetMetric {
+  assetId: String
+  assetMetrics: [AssetMetric]
+  assetTitle: String
+  assetType: String
+  canonicalUrls: [String]
+  commentsMetric: Metric
+  dataSourceId: String
+  defaultMetric: Metric
+  downloadsMetric: Metric
+  impressionMadeMetric: Metric
+  lastViewedMetric: Metric
+  selectedMetrics: [Metric]
+  ratingsMetric: Metric
+  urls: [String]
+  usersInvolvedMetric: Metric
+}
+
+enum EntityType {
+  INDIVIDUAL
+}
+
+type Event {
+  acquisitionProperties: [AcquisitionProperty]
+  applicationId: String
+  assetTitle: String
+  campaignId: String
+  campaignName: String
+  canonicalUrl: String
+  createDate: String
+  emailAddressHashed: String
+  eventDate: String
+  eventId: String
+  experienceId: String
+  experienceName: String
+  individualName: String
+  name: String
+  pageDescription: String
+  pageGroupId: String
+  pageKeywords: String
+  pageTitle: String
+  properties: [Property]
+  referrer: String
+  url: String
+}
+
+type EventAnalysis {
+  analysisType: AnalysisType
+  channelId: String
+  compareToPrevious: Boolean
+  createDate: String
+  createdByUserId: String
+  createdByUserName: String
+  eventAnalysisBreakdowns: [EventAnalysisBreakdown]
+  eventAnalysisFilters: [EventAnalysisFilter]
+  eventDefinitionId: String
+  id: String
+  modifiedDate: String
+  modifiedByUserId: String
+  modifiedByUserName: String
+  name: String
+  rangeEnd: String
+  rangeKey: Int
+  rangeStart: String
+  referencedObjects: EventAnalysisReferencedObject
+}
+
+type EventAnalysisBag {
+  eventAnalyses: [EventAnalysis]
+  total: Int
+}
+
+type EventAnalysisBreakdown {
+  attributeId: String
+  attributeType: String
+  binSize: Float
+  dataType: String
+  dateGrouping: String
+  description: String
+  displayName: String
+  sortType: String
+}
+
+input EventAnalysisBreakdownInput {
+  attributeId: String!
+  attributeType: AttributeType!
+  binSize: Float
+  dataType: EventAttributeDefinitionDataType!
+  dateGrouping: DateGrouping
+  description: String
+  displayName: String!
+  sortType: SortType
+}
+
+type EventAnalysisFilter {
+  attributeId: String
+  attributeType: String
+  dataType: String
+  description: String
+  displayName: String
+  operator: String
+  values: [String]
+}
+
+input EventAnalysisFilterInput {
+  attributeId: String!
+  attributeType: AttributeType!
+  dataType: EventAttributeDefinitionDataType!
+  description: String
+  displayName: String!
+  operator: String!
+  values: [String]!
+}
+
+type EventAnalysisReferencedObject {
+  eventAttributeDefinitions: [EventAttributeDefinition]
+  eventDefinition: EventDefinition
+}
+
+type EventAnalysisResult {
+  breakdownItems: [BreakdownItem]
+  count: Int
+  page: Int
+  previousValue: Float
+  value: Float
+}
+
+type EventAttributeDefinition {
+  dataType: EventAttributeDefinitionDataType
+  description: String
+  displayName: String
+  encodedName: String
+  id: String
+  name: String
+  recentValues: [EventAttributeValue]
+  sampleValue: String
+  type: EventAttributeDefinitionType
+}
+
+type EventAttributeDefinitionBag {
+  eventAttributeDefinitions: [EventAttributeDefinition]
+  total: Int
+}
+
+enum EventAttributeDefinitionDataType {
+  BOOLEAN
+  DATE
+  DURATION
+  NUMBER
+  STRING
+}
+
+enum EventAttributeDefinitionType {
+  ALL
+  GLOBAL
+  LOCAL
+}
+
+type EventAttributeValue {
+  lastSeenDate: String
+  value: String
+}
+
+type EventAttributeValueBag {
+  eventAttributeValues: [String]
+  total: Int
+}
+
+type EventBag {
+  events: [Event]
+  total: Int
+}
+
+type EventDefinition {
+  description: String
+  displayName: String
+  eventAttributeDefinitions: [EventAttributeDefinition]
+  id: String
+  hidden: Boolean
+  name: String
+  type: EventDefinitionType
+}
+
+type EventDefinitionBag {
+  eventDefinitions: [EventDefinition]
+  total: Int
+}
+
+enum EventDefinitionType {
+  ALL
+  CUSTOM
+  DEFAULT
+}
+
+type EventMetric {
+  totalCampaignActivitiesMetric: Metric
+  totalEventsMetric: Metric
+  totalSessionsMetric: Metric
+  totalUniqueVisitorsMetric: Metric
+}
+
+type EventProperty {
+  dataType: EventAttributeDefinitionDataType
+  displayName: String
+  id: String
+  name: String
+}
+
+type EventPropertyBag {
+  eventProperties: [EventProperty]
+  total: Int
+}
+
+type EventsByUserSession {
+  totalEvents: Int
+  totalEventsMetric: Metric
+  totalPageGroupsMetric: Metric
+  userSessions: [UserSession]
+}
+
+type Experiment {
+  channelId: String
+  createDate: String
+  dataSourceId: String
+  description: String
+  dxpExperienceName: String
+  dxpSegmentName: String
+  dxpVariants: [ExperimentVariant]
+  finishedDate: String
+  goal: Goal
+  id: String
+  metrics: ExperimentMetric
+  metricsHistogram: [ExperimentMetric]
+  modifiedDate: String
+  name: String
+  pageURL: String
+  publishable: Boolean
+  publishedDXPVariantId: String
+  sessions: Int
+  sessionsHistogram: [HistogramMetric]
+  startedDate: String
+  status: String
+  type: String
+  winnerDXPVariantId: String
+}
+
+type ExperimentBag {
+  experiments: [Experiment]
+  total: Int
+}
+
+type ExperimentMetric {
+  completion: Float
+  confidenceLevel: Float
+  elapsedDays: Int
+  estimatedDaysLeft: Int
+  processedDate: String
+  variantMetrics: [ExperimentVariantMetric]
+}
+
+input ExperimentSettings {
+  confidenceLevel: Float!
+  dxpVariantsSettings: [DXPVariantSettings]!
+}
+
+type ExperimentVariant {
+  changes: Int
+  control: Boolean
+  dxpVariantId: String
+  dxpVariantName: String
+  sessionsHistogram: [HistogramMetric]
+  trafficSplit: Float
+  uniqueVisitors: Int
+}
+
+type ExperimentVariantMetric {
+  confidenceInterval: [Float]
+  dxpVariantId: String
+  improvement: Float
+  median: Float
+  probabilityToWin: Float
+}
+
+type FormFieldMetric {
+  fieldAbandonmentsMetric: Metric
+  fieldEmptyMetric: Metric
+  fieldInteractionDurationMetric: Metric
+  fieldInteractionsMetric: Metric
+  fieldName: String
+  fieldRefilledMetric: Metric
+}
+
+type FormMetric implements AssetMetric {
+  abandonmentsMetric: Metric
+  assetId: String
+  assetMetrics: [AssetMetric]
+  assetTitle: String
+  assetType: String
+  canonicalUrls: [String]
+  completionTimeMetric: Metric
+  dataSourceId: String
+  defaultMetric: Metric
+  formPageMetrics: [FormPageMetric]
+  selectedMetrics: [Metric]
+  submissionsMetric: Metric
+  urls: [String]
+  viewsMetric: Metric
+}
+
+type FormPageMetric {
+  formFieldMetrics: [FormFieldMetric]
+  pageAbandonmentsMetric: Metric
+  pageIndex: String
+  pageName: String
+  pageViewsMetric: Metric
+}
+
+type Goal {
+  metric: String
+  target: String
+}
+
+type HeatMapMetric {
+  colDimension: String
+  rowDimension: String
+  value: Float
+}
+
+type HistogramMetric {
+  key: String
+  previousValue: Float
+  previousValueKey: String
+  trend: Trend
+  value: Float
+  valueKey: String
+}
+
+type HistogramMetricBag {
+  asymmetricComparison: Boolean
+  metrics: [HistogramMetric]
+  total: Int
+}
+
+type Individual {
+  accountName: String
+  email: String
+  id: String
+  name: String
+}
+
+type IndividualBag {
+  individuals: [Individual]
+  total: Int
+}
+
+type IndividualMetric {
+  anonymousIndividualsMetric: Metric
+  knownIndividualsMetric: Metric
+  totalIndividualsMetric: Metric
+}
+
+type Job {
+  id: String
+  name: String
+  nextRunDate: String
+  parameters: [JobParameter]
+  status: JobStatus
+  runDate: String
+  runFrequency: JobRunFrequency
+  runDataPeriod: JobRunDataPeriod
+  type: JobType
+}
+
+type JobBag {
+  jobs: [Job]
+  total: Int
+}
+
+type JobParameter {
+  name: String
+  value: String
+}
+
+input JobParameterInput {
+  name: String!
+  value: String!
+}
+
+type JobRun {
+  id: String
+  completedDate: String
+  context: [KeyValuePair]
+  status: JobRunStatus
+}
+
+type JobRunBag {
+  jobRuns: [JobRun]
+  total: Int
+}
+
+enum JobRunDataPeriod {
+  LAST_7_DAYS
+  LAST_30_DAYS
+  LAST_180_DAYS
+  LAST_365_DAYS
+}
+
+enum JobRunFrequency {
+  EVERY_7_DAYS
+  EVERY_14_DAYS
+  EVERY_30_DAYS
+  MANUAL
+}
+
+enum JobRunStatus {
+  COMPLETED
+  FAILED
+  PUBLISHED
+  RUNNING
+}
+
+type JobRunsMonthlyStatistics {
+  availableJobRuns: Int
+  completedJobRuns: Int
+  failedJobRuns: Int
+  publishedJobRuns: Int
+  runningJobRuns: Int
+  scheduledJobRuns: Int
+}
+
+enum JobStatus {
+  FAILED
+  PENDING
+  READY
+  RUNNING
+  SCHEDULED
+}
+
+enum JobType {
+  CONTENT_RECOMMENDATION_ITEM_SIMILARITY
+}
+
+type JournalMetric implements AssetMetric {
+  assetId: String
+  assetMetrics: [AssetMetric]
+  assetTitle: String
+  assetType: String
+  canonicalUrls: [String]
+  dataSourceId: String
+  defaultMetric: Metric
+  selectedMetrics: [Metric]
+  urls: [String]
+  viewsMetric: Metric
+}
+
+type KeyValuePair {
+  key: String
+  value: String
+}
+
+type Keyword {
+  type: String
+  value: String
+}
+
+type Metric {
+  accounts(keywords: String, segmentId: String, size: Int!, start: Int!): AccountNameBag
+  anonymousUsersCount: Int
+  audienceReport: AudienceReport
+  browser: [Metric]
+  cohortHeatMap: [CohortHeatMapMetric]
+  device: [Metric]
+  geolocation: [Metric]
+  histogram: HistogramMetricBag
+  individuals(keywords: String, size: Int!, start: Int!): IndividualBag
+  knownUsersCount: Int
+  metrics: [Metric]
+  name: String
+  nonsegmentedKnownUsersCount: Int
+  previousValue: Float
+  previousValueKey: String
+  segment: MetricBag
+  segmentedAnonymousUsersCount: Int
+  segmentedKnownUsersCount: Int
+  trend: Trend
+  value: Float
+  valueKey: String
+}
+
+type MetricBag {
+  metrics: [Metric]
+  total: Int
+}
+
+type MostActiveVisitorBag {
+  mostActiveVisitors: [ActiveVisitor]
+  total: Int
+}
+
+type MutationType {
+  blockCustomEventDefinitions(eventDefinitionIds: [String]!): [Boolean]
+  createEventAnalysis(analysisType: AnalysisType!, channelId: String!, compareToPrevious: Boolean!, eventAnalysisBreakdowns: [EventAnalysisBreakdownInput], eventAnalysisFilters: [EventAnalysisFilterInput], eventDefinitionId: String!, name: String!, rangeEnd: String, rangeKey: Int, rangeStart: String, userId: String!, userName: String!): EventAnalysis
+  createJob(name: String!, parameters: [JobParameterInput], runDataPeriod: JobRunDataPeriod, runFrequency: JobRunFrequency, runNow: Boolean, type: JobType!): Job
+  dashboard(dashboardId: String!, definition: String!, modifiedByUserId: String!, modifiedByUserName: String!): Dashboard
+  dataControlTasks(emailAddresses: [String], fileName: String, ownerId: String!, types: [DataControlTaskType]!, userId: String!, userName: String!): Boolean
+  deleteEventAnalyses(eventAnalysisIds: [String]!): [Boolean]
+  deleteExperiment(experimentId: String!): Boolean
+  deleteJobs(jobIds: [String]!): [Boolean]
+  experiment(experimentId: String!, experimentSettings: ExperimentSettings, publishedDXPVariantId: String, status: String): Experiment
+  hideBlockedEventDefinitions(blockedEventDefinitionIds: [String]!): [BlockedCustomEventDefinition]
+  hideEventDefinitions(eventDefinitionIds: [String]!): [EventDefinition]
+  preference(key: String!, value: String!): Preference
+  runJob(jobId: String!, runDataPeriod: JobRunDataPeriod!): Job
+  timeZone(value: String!): String
+  unblockCustomEventDefinitions(eventDefinitionIds: [String]!): [Boolean]
+  unhideBlockedEventDefinitions(blockedEventDefinitionIds: [String]!): [BlockedCustomEventDefinition]
+  unhideEventDefinitions(eventDefinitionIds: [String]!): [EventDefinition]
+  updateEventAnalysis(analysisType: AnalysisType!, channelId: String!, compareToPrevious: Boolean!, eventAnalysisBreakdowns: [EventAnalysisBreakdownInput], eventAnalysisFilters: [EventAnalysisFilterInput], eventAnalysisId: String!, eventDefinitionId: String!, name: String!, rangeEnd: String, rangeKey: Int, rangeStart: String, userId: String!, userName: String!): EventAnalysis
+  updateEventAttributeDefinition(dataType: EventAttributeDefinitionDataType, description: String, displayName: String, eventAttributeDefinitionId: String!): EventAttributeDefinition
+  updateEventDefinition(description: String, displayName: String, eventDefinitionId: String!): EventDefinition
+  updateJob(jobId: String!, name: String!, parameters: [JobParameterInput], runDataPeriod: JobRunDataPeriod, runFrequency: JobRunFrequency, runNow: Boolean): Job
+}
+
+type ObjectEntryMetric implements AssetMetric {
+  assetId: String
+  assetMetrics: [AssetMetric]
+  assetTitle: String
+  assetType: String
+  canonicalUrls: [String]
+  dataSourceId: String
+  defaultMetric: Metric
+  downloadsMetric: Metric
+  impressionMadeMetric: Metric
+  selectedMetrics: [Metric]
+  urls: [String]
+  viewsMetric: Metric
+}
+
+type Organization implements DXPEntity {
+  dataSourceName: String
+  id: String
+  name: String
+  parentName: String
+  type: String
+}
+
+type PageAsset {
+  canonicalUrl: String
+  description: String
+  keywords: [Keyword]
+  id: String
+  title: String
+  url: String
+}
+
+type PageAssetBag {
+  pageAssets: [PageAsset]
+  total: Int
+}
+
+type PageMetric implements AssetMetric {
+  assetId: String
+  assetMetrics: [AssetMetric]
+  assetTitle: String
+  assetType: String
+  avgTimeOnPageMetric: Metric
+  bounceRateMetric: Metric
+  defaultMetric: Metric
+  directAccessMetric: Metric
+  dataSourceId: String
+  entrancesMetric: Metric
+  exitRateMetric: Metric
+  indirectAccessMetric: Metric
+  selectedMetrics: [Metric]
+  urls: [String]
+  visitorsMetric: Metric
+  viewsMetric: Metric
+}
+
+type PagePathNode {
+  canonicalUrl: String
+  external: Boolean
+  followingPagePathNodes: [PagePathNode]
+  previousPagePathNodes: [PagePathNode]
+  title: String
+  views: Int
+}
+
+type Preference {
+  key: String
+  value: String
+}
+
+type Property {
+  name: String
+  value: String
+}
+
+input PropertyFilter {
+  negate: Boolean!
+  filter: String!
+}
+
+type QueryType {
+  acquisitions(accountId: String, acquisitionType: AcquisitionType!, channelId: String, dataSourceId: String, rangeEnd: String, rangeKey: Int, rangeStart: String, segmentId: String, size: Int!, start: Int!): CompositionBag
+  activities(applicationId: String!, eventId: String!, eventContextPropertyFilters: [PropertyFilter], rangeKey: Int!, size: Int!, start: Int!): ActivityBag
+  activityEventContextKeys: [String]
+  assetPages(accountId: String, assetId: String!, assetType: AssetType!, channelId: String, country: String, deviceType: String, individualId: String, rangeEnd: String, rangeKey: Int, rangeStart: String, segmentId: String, selectedMetrics: [String], size: Int!, start: Int!, title: String): AssetMetricBag
+  assets(canonicalUrl: String, channelId: String, country: String, deviceType: String, rangeEnd: String, rangeKey: Int, rangeStart: String, url: String): [AssetMetric]
+  blockedCustomEventDefinitions(keyword: String, page: Int!, size: Int!, sort: Sort!): BlockedCustomEventDefinitionBag
+  assetSummaries(accountIds: [String], channelId: String, individualIds: [String], keywords: String, objectType: String, rangeEnd: String, rangeKey: Int, rangeStart: String, segmentIds: [String], size: Int!, sort: Sort!, start: Int!): AssetSummaryMetricBag
+  blog(accountId: String, assetId: String!, canonicalUrl: String, channelId: String, country: String, deviceType: String, includePrevious: Boolean, individualId: String, rangeEnd: String, rangeKey: Int, rangeStart: String, segmentId: String, title: String, url: String): BlogMetric
+  blogs(accountId: String, channelId: String, individualId: String, keywords: String, rangeEnd: String, rangeKey: Int, rangeStart: String, segmentId: String, size: Int!, sort: Sort!, start: Int!): AssetMetricBag
+  campaignTouchesByDay(accountId: String, channelId: String!, date: String, entityId: String, entityType: EntityType!, keywords: String, page: Int!, rangeEnd: String, rangeKey: Int, rangeStart: String, size: Int!): [CampaignTouchDay!]!
+  cohort(accountId: String, channelId: String, interval: String!, segmentId: String): CohortMetric
+  customEventLimitReached: Boolean
+  dashboard(dashboardId: String!): Dashboard
+  dashboards(channelId: String, keywords: String, size: Int!, sort: Sort!, start: Int!): DashboardBag
+  dataControlTasks(batchId: String, keywords: String, rangeKey: Int, size: Int!, sort: Sort!, start: Int!, statuses: [DataControlTaskStatus], types: [DataControlTaskType]): DataControlTaskBag
+  dataSource(dataSourceId: String!): DataSource
+  dataSources(credentialsType: String, size: Int, sort: Sort, type: String): [DataSource]
+  document(accountId: String, assetId: String!, canonicalUrl: String, channelId: String, country: String, deviceType: String, includePrevious: Boolean, individualId: String, rangeEnd: String, rangeKey: Int, rangeStart: String, segmentId: String, title: String, url: String): DocumentMetric
+  documents(accountId: String, channelId: String, groupIds: [String], individualId: String, keywords: String, rangeEnd: String, rangeKey: Int, rangeStart: String, segmentId: String, size: Int!, sort: Sort!, start: Int!): AssetMetricBag
+  eventAnalyses(channelId: String!, keywords: String, page: Int!, size: Int!, sort: Sort!): EventAnalysisBag
+  eventAnalysis(eventAnalysisId: String!): EventAnalysis
+  eventAnalysisResult(analysisType: AnalysisType!, channelId: String!, compareToPrevious: Boolean!, eventAnalysisBreakdowns: [EventAnalysisBreakdownInput], eventAnalysisFilters: [EventAnalysisFilterInput], eventDefinitionId: String!, page: Int!, rangeEnd: String, rangeKey: Int, rangeStart: String, size: Int!): EventAnalysisResult
+  eventAttributeDefinition(displayName: String, id: String): EventAttributeDefinition
+  eventAttributeDefinitions(eventDefinitionId: String, keyword: String, page: Int!, size: Int!, sort: Sort!, type: EventAttributeDefinitionType!): EventAttributeDefinitionBag
+  eventAttributeValues(channelId: String!, eventAttributeDefinitionId: String!, eventDefinitionId: String!, keywords: String!, size: Int!, start: Int!): EventAttributeValueBag
+  eventDefinition(displayName: String, id: String): EventDefinition
+  eventDefinitions(blocked: Boolean, eventType: EventDefinitionType!, hidden: Boolean, keyword: String, page: Int!, size: Int!, sort: Sort!): EventDefinitionBag
+  eventMetric(accountId: String, channelId: String, entityId: String!, entityType: EntityType!, includeWebhookEvents: Boolean, interval: String, keywords: String, rangeEnd: String, rangeKey: Int, rangeStart: String, segmentId: String): EventMetric
+  eventProperties(eventId: String, keyword: String, page: Int!, size: Int!, sort: Sort!): EventPropertyBag
+  events(accountId: String, channelId: String!, groupIds: [String], includeAnonymousUsers: Boolean, includeWebhookEvents: Boolean, individualId: String, keywords: String, page: Int!, rangeEnd: String, rangeKey: Int, rangeStart: String, segmentId: String, size: Int!): EventBag
+  eventsByUserSessions(accountId: String, channelId: String!, entityId: String, entityType: EntityType!, groupIds: [String], includeAnonymousUsers: Boolean, includeWebhookEvents: Boolean, keywords: String, page: Int!, rangeEnd: String, rangeKey: Int, rangeStart: String, segmentId: String, size: Int!): EventsByUserSession
+  experiment(channelId: String!, experimentId: String!): Experiment
+  experimentEstimatedDaysDuration(experimentId: String!, experimentSettings: ExperimentSettings!): Int
+  experiments(channelId: String, keywords: String, size: Int!, sort: Sort!, start: Int!): ExperimentBag
+  form(accountId: String, assetId: String!, canonicalUrl: String, channelId: String, country: String, deviceType: String, includePrevious: Boolean, individualId: String, rangeEnd: String, rangeKey: Int, rangeStart: String, segmentId: String, title: String, url: String): FormMetric
+  forms(accountId: String, channelId: String, individualId: String, keywords: String, rangeEnd: String, rangeKey: Int, rangeStart: String, segmentId: String, size: Int!, sort: Sort!, start: Int!): AssetMetricBag
+  globalEventAttributeDefinitions: [EventAttributeDefinition]
+  groups(channelId: String, keywords: String, size: Int!, sort: Sort!, start: Int!): DXPEntityBag
+  identityActivityCount(channelId: String, excludedEventIds: [String], groupIds: [String], includedEventIds: [String], rangeKey: Int!): Composition
+  individualInterests(channelId: String, keywords: String, size: Int!, sort: Sort!, start: Int!): CompositionBag
+  individualMetric(active: Boolean, channelId: String, interval: String, rangeKey: Int): IndividualMetric
+  individualSegmentInterests(active: Boolean, channelId: String, individualSegmentId: String!, keywords: String, size: Int!, sort: Sort!, start: Int!): CompositionBag
+  jobById(id: String!): Job
+  jobByName(name: String!): Job
+  jobRuns(jobId: String!, size: Int!, sort: Sort!, start: Int!): JobRunBag
+  jobRunsMonthlyStatistics(jobId: String!): JobRunsMonthlyStatistics
+  jobs(keywords: String, size: Int!, sort: Sort!, start: Int!): JobBag
+  journal(accountId: String, assetId: String!, canonicalUrl: String, channelId: String, country: String, deviceType: String, includePrevious: Boolean, individualId: String, rangeEnd: String, rangeKey: Int, rangeStart: String, segmentId: String, title: String, url: String): JournalMetric
+  journals(accountId: String, channelId: String, individualId: String, keywords: String, rangeEnd: String, rangeKey: Int, rangeStart: String, segmentId: String, size: Int!, sort: Sort!, start: Int!): AssetMetricBag
+  objectEntry(accountId: String, assetId: String!, canonicalUrl: String, channelId: String, country: String, deviceType: String, includePrevious: Boolean, individualId: String, rangeEnd: String, rangeKey: Int, rangeStart: String, segmentId: String, title: String, url: String): ObjectEntryMetric
+  mostActiveVisitors(channelId: String!, groupIds: [String], rangeEnd: String, rangeKey: Int, rangeStart: String, size: Int!, start: Int!): MostActiveVisitorBag
+  organizations(channelId: String, keywords: String, size: Int!, sort: Sort!, start: Int!): DXPEntityBag
+  page(accountId: String, canonicalUrl: String, channelId: String, country: String, deviceType: String, experienceId: String, includePrevious: Boolean, individualId: String, rangeEnd: String, rangeKey: Int, rangeStart: String, segmentId: String, title: String, url: String): PageMetric
+  pageAssets(keywords: String, propertyFilters: [PropertyFilter], size: Int!, sort: Sort!, start: Int!): PageAssetBag
+  pagePath(accountId: String, canonicalUrl: String, channelId: String, individualId: String, rangeEnd: String, rangeKey: Int, rangeStart: String, segmentId: String, title: String!): PagePathNode
+  pages(accountId: String, channelId: String, dataSourceId: String, experienceId: String, experimentId: String, individualId: String, keywords: String, rangeEnd: String, rangeKey: Int, rangeStart: String, segmentId: String, size: Int!, sort: Sort!, start: Int!, terms: String, variantId: String): AssetMetricBag
+  pagesCount(fromDate: String, toDate: String): Int
+  preference(key: String!): Preference
+  roles(channelId: String, keywords: String, size: Int!, sort: Sort!, start: Int!): DXPEntityBag
+  searchTerms(accountId: String, channelId: String, dataSourceId: String, keywords: String, rangeEnd: String, rangeKey: Int, rangeStart: String, segmentId: String, size: Int!, start: Int!): CompositionBag
+  segmentPageViews(canonicalUrl: String, channelId: String, rangeEnd: String, rangeKey: Int, rangeStart: String, segmentIds: [String], title: String!): [SegmentPageViews]
+  site(accountId: String, assetId: String, channelId: String, country: String, deviceType: String, emailAddresses: [String], groupIds: [String], includePrevious: Boolean, interval: String, rangeEnd: String, rangeKey: Int, rangeStart: String, segmentId: String, timeZoneId: String): SiteMetric
+  siteInterests(accountId: String, channelId: String, dataSourceId: String, rangeEnd: String, rangeKey: Int, rangeStart: String, segmentId: String, size: Int!, start: Int!): CompositionBag
+  siteVisitor(channelId: String, groupIds: [String], rangeKey: Int, segmentId: String): SiteVisitorBehaviorMetric
+  siteVisitorHeatMap(accountId: String, assetId: String, channelId: String, rangeEnd: String, rangeKey: Int, rangeStart: String, segmentId: String, timeZoneId: String): [HeatMapMetric]
+  suppressions(keywords: String, size: Int!, sort: Sort!, start: Int!): SuppressionBag
+  teams(channelId: String, keywords: String, size: Int!, sort: Sort!, start: Int!): DXPEntityBag
+  timeRange: [TimeRange]
+  userGroups(channelId: String, keywords: String, size: Int!, sort: Sort!, start: Int!): DXPEntityBag
+  users(channelId: String, keywords: String, size: Int!, sort: Sort!, start: Int!): DXPEntityBag
+  visitFrequency(channelId: String!, groupIds: [String], rangeEnd: String, rangeKey: Int, rangeStart: String): VisitFrequencyBag
+}
+
+type SegmentPageViews {
+  segmentId: String
+  views: Int
+}
+
+type SiteMetric {
+  anonymousVisitorsMetric: Metric
+  assetMetrics: [AssetMetric]
+  bounceRateMetric: Metric
+  knownVisitorsMetric: Metric
+  sessionDurationMetric: Metric
+  sessionsMetric: Metric
+  sessionsPerVisitorMetric: Metric
+  visitorsMetric: Metric
+}
+
+type SiteVisitorBehaviorMetric {
+  averageSessionDuration: Int
+  knownVisitors: Int
+  totalSessionDuration: Int
+  visitors: Int
+}
+
+input Sort {
+  column: String!
+  type: SortType!
+}
+
+enum SortType {
+  ASC
+  DESC
+}
+
+type Suppression {
+  createDate: String
+  dataControlTaskBatchId: String
+  dataControlTaskCreateDate: String
+  dataControlTaskStatus: String
+  emailAddress: String
+  id: String
+}
+
+type SuppressionBag {
+  suppressions: [Suppression]
+  total: Int
+}
+
+type TimeRange {
+  default: Boolean
+  endLocalDateTime: String
+  key: String
+  rangeKey: Int
+  startLocalDateTime: String
+}
+
+type Trend {
+  percentage: Float
+  trendClassification: String
+}
+
+type User implements DXPEntity {
+  dataSourceName: String
+  id: String
+  name: String
+  screenName: String
+}
+
+type UserSession {
+  becameKnown: Boolean
+  browserName: String
+  completeDate: String
+  contentLanguageId: String
+  createDate: String
+  description: String
+  devicePixelRatio: String
+  deviceType: String
+  events: [Event]
+  individualId: String
+  jobTitle: String
+  keywords: String
+  languageId: String
+  screenHeight: String
+  screenWidth: String
+  timezoneOffset: String
+  userAgent: String
+  userId: String
+  userName: String
+}
+
+type VisitFrequencyBag {
+  maxCount: Int
+  total: Int
+  totalCount: Int
+  visitFrequency: [Composition]
+}

@@ -1,0 +1,129 @@
+---
+title: Examples
+---
+
+**Unofficial.** Each query below is validated against the captured schema by the test suite, and was run against a connected DXP when it was added. The DSR queries are the ones the Digital Sales Room analytics send.
+
+Send each one to `https://<dxp-host>/o/analytics-rest/v1.0/graphql` as described in the [overview](/graphql/overview):
+
+```bash
+curl \
+	--data '{"query": "<query>", "variables": {"channelId": "<channel-id>", "rangeKey": 30}}' \
+	--header "Content-Type: application/json" \
+	--user "user@example.com:YOUR_PASSWORD" \
+	"https://<dxp-host>/o/analytics-rest/v1.0/graphql"
+```
+
+## Time Ranges
+
+Lists the valid `rangeKey` values. Takes no variables.
+
+```graphql
+query TimeRange {
+	timeRange {
+		default
+		endLocalDateTime
+		key
+		rangeKey
+		startLocalDateTime
+	}
+}
+```
+
+## Visit Frequency
+
+How often visitors come back. Used by the DSR room analytics.
+
+```graphql
+query VisitFrequency(
+	$channelId: String!
+	$groupIds: [String]
+	$rangeEnd: String
+	$rangeKey: Int
+	$rangeStart: String
+) {
+	visitFrequency(
+		channelId: $channelId
+		groupIds: $groupIds
+		rangeEnd: $rangeEnd
+		rangeKey: $rangeKey
+		rangeStart: $rangeStart
+	) {
+		visitFrequency {
+			count
+			name
+		}
+		totalCount
+	}
+}
+```
+
+## Visitors Over Time
+
+A histogram of visitors for the given sites. `interval` is a bucket size such as `D` (day).
+
+```graphql
+query SitesMetricQuery(
+	$channelId: String!
+	$groupIds: [String]
+	$interval: String!
+	$rangeEnd: String
+	$rangeKey: Int
+	$rangeStart: String
+) {
+	site(
+		channelId: $channelId
+		groupIds: $groupIds
+		interval: $interval
+		rangeEnd: $rangeEnd
+		rangeKey: $rangeKey
+		rangeStart: $rangeStart
+	) {
+		visitorsMetric {
+			histogram {
+				metrics {
+					key
+					value
+					valueKey
+				}
+				total
+			}
+		}
+	}
+}
+```
+
+## Most Active Visitors
+
+The visitors with the most activities, paginated with `start` and `size`.
+
+```graphql
+query MostActiveVisitors(
+	$channelId: String!
+	$groupIds: [String]
+	$rangeEnd: String
+	$rangeKey: Int
+	$rangeStart: String
+	$size: Int!
+	$start: Int!
+) {
+	mostActiveVisitors(
+		channelId: $channelId
+		groupIds: $groupIds
+		rangeEnd: $rangeEnd
+		rangeKey: $rangeKey
+		rangeStart: $rangeStart
+		size: $size
+		start: $start
+	) {
+		mostActiveVisitors {
+			activitiesCount
+			emailAddress
+			firstName
+			id
+			lastName
+		}
+		total
+	}
+}
+```

@@ -1,0 +1,54 @@
+---
+title: GraphQL via DXP
+---
+
+**Unofficial. Internal and unstable.** This is the GraphQL API that the LDP web UI, the Digital Sales Room (DSR) analytics, and in-portal widgets use. There is no public contract: types and fields can change without notice. Prefer the Public REST group when it covers what you need.
+
+## Endpoint
+
+The API is reached through a DXP that is connected to an LDP workspace. The DXP forwards each request to LDP on behalf of the company:
+
+```text
+POST https://<dxp-host>/o/analytics-rest/v1.0/graphql
+```
+
+The body is a standard GraphQL request: `{"query": "...", "variables": {...}}`.
+
+## Authenticate
+
+Use DXP credentials, not an LDP token:
+
+- **Basic Auth** or a **DXP OAuth2 token** for server-to-server calls.
+- A **logged-in session** for browser calls. Send `x-csrf-token` with the value of `Liferay.authToken`, or the call returns 403.
+
+```bash
+curl \
+	--data '{"query": "{ timeRange { key rangeKey } }"}' \
+	--header "Content-Type: application/json" \
+	--user "user@example.com:YOUR_PASSWORD" \
+	"https://<dxp-host>/o/analytics-rest/v1.0/graphql"
+```
+
+```json
+{
+	"data": {
+		"timeRange": [
+			{"key": "last-7-days", "rangeKey": 7},
+			{"key": "last-30-days", "rangeKey": 30}
+		]
+	}
+}
+```
+
+The `timeRange` query is the only endpoint that lists the valid `rangeKey` values.
+
+## Conventions
+
+- **Channel:** most queries take a `channelId`. List the channels connected to the DXP with `GET https://<dxp-host>/o/analytics-settings-rest/v1.0/channels`.
+- **Time ranges:** pass `rangeKey`, or `rangeStart` and `rangeEnd` for a custom range.
+- **Errors:** GraphQL errors come back in the `errors` array with HTTP 200. Unknown field arguments in the query fail validation; unknown variables are ignored.
+- **Mutations:** the schema includes mutations used by the LDP UI. Do not call them from integrations.
+
+## Reference
+
+The [reference](/graphql/reference/operations/queries/time-range) is generated from the schema by introspection, so it lists every operation and type, with no descriptions.
