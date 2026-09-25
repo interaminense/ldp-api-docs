@@ -29,5 +29,5 @@ Then open http://localhost:8765/ldp-api-docs/.
 Groups are declared in `site.config.mjs`. Turn one off for a build with its variable, for example:
 
 ```bash
-DOCS_GROUP_DSR=false npm run build
+DOCS_GROUP_GRAPHQL=false npm run build
 ```

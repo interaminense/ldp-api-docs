@@ -9,14 +9,6 @@ export const GROUPS = [
 	},
 	{
 		defaultEnabled: true,
-		dir: 'dsr',
-		id: 'dsr',
-		label: 'DSR',
-		spec: 'specs/dsr.yaml',
-		stability: 'Internal',
-	},
-	{
-		defaultEnabled: true,
 		dir: 'graphql',
 		id: 'graphql',
 		label: 'GraphQL via DXP',
