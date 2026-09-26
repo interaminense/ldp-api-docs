@@ -15,7 +15,11 @@ const commands = [
 const graphqlGroup = groups.find((group) => group.schema);
 
 if (graphqlGroup) {
-	writePublicSchema(graphqlGroup.schema, graphqlGroup.publicSchema);
+	writePublicSchema(
+		graphqlGroup.schema,
+		graphqlGroup.publicSchema,
+		graphqlGroup.descriptions
+	);
 
 	rmSync(`docs/${graphqlGroup.dir}/reference`, {force: true, recursive: true});
 

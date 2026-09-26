@@ -9,6 +9,7 @@ export const GROUPS = [
 	},
 	{
 		defaultEnabled: true,
+		descriptions: 'specs/graphql/descriptions.json',
 		dir: 'graphql',
 		id: 'graphql',
 		label: 'GraphQL via DXP',
