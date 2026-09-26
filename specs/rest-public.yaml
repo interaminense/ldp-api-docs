@@ -43,6 +43,7 @@ paths:
       tags: [Index]
       operationId: getReportsIndex
       summary: List the available report resources
+      description: "Returns links to every report resource: blogs, documents and media, forms, individuals, pages, segments and web contents."
       responses:
         "200":
           description: HATEOAS index.
@@ -66,6 +67,7 @@ paths:
       tags: [Pages]
       operationId: getPages
       summary: List pages with their metrics
+      description: "Lists pages with their metrics, 20 per page, sorted by views in descending order by default. Filter by channel, title keywords or experience, and set the time range with rangeKey (default: last 30 days)."
       parameters:
         - $ref: "#/components/parameters/channelId"
         - $ref: "#/components/parameters/page"
@@ -109,6 +111,8 @@ paths:
       operationId: getPage
       summary: Get one page's metrics
       description: |
+        Returns metrics for one page, identified by its URL encoded as Base64-URL. Set the time range with rangeKey (default: last 30 days), filter by experience, and use expand=histogram to get daily buckets.
+
         `pageURL` is the page URL encoded as **Base64-URL without `=` padding**.
 
         ```bash
@@ -154,6 +158,7 @@ paths:
       tags: [Blogs]
       operationId: getBlogs
       summary: List blogs with their metrics
+      description: "Lists blogs with their metrics, 20 per page, sorted by views in descending order by default. Filter by channel or title keywords, and set the time range with rangeKey (default: last 30 days)."
       parameters:
         - $ref: "#/components/parameters/channelId"
         - $ref: "#/components/parameters/page"
@@ -177,6 +182,7 @@ paths:
       tags: [Blogs]
       operationId: getBlog
       summary: Get one blog's metrics
+      description: "Returns metrics for one blog over the rangeKey time range (default: last 30 days). Use expand=histogram to get daily buckets."
       parameters:
         - {name: blogId, in: path, required: true, schema: {type: string}}
         - {name: blogTitle, in: query, schema: {type: string}}
@@ -193,6 +199,7 @@ paths:
       tags: [Documents and Media]
       operationId: getDocuments
       summary: List documents with their metrics
+      description: "Lists documents and media with their metrics, 20 per page, sorted by downloads in descending order by default. Filter by channel or title keywords, and set the time range with rangeKey (default: last 30 days)."
       parameters:
         - $ref: "#/components/parameters/channelId"
         - $ref: "#/components/parameters/page"
@@ -216,6 +223,7 @@ paths:
       tags: [Documents and Media]
       operationId: getDocument
       summary: Get one document's metrics
+      description: "Returns metrics for one document over the rangeKey time range (default: last 30 days). Use expand=histogram to get daily buckets."
       parameters:
         - {name: documentId, in: path, required: true, schema: {type: string}}
         - {name: documentTitle, in: query, schema: {type: string}}
@@ -232,6 +240,7 @@ paths:
       tags: [Forms]
       operationId: getForms
       summary: List forms with their metrics
+      description: "Lists forms with their metrics, 20 per page, sorted by submissions in descending order by default. Filter by channel or title keywords, and set the time range with rangeKey (default: last 30 days)."
       parameters:
         - $ref: "#/components/parameters/channelId"
         - $ref: "#/components/parameters/page"
@@ -272,6 +281,7 @@ paths:
       tags: [Forms]
       operationId: getForm
       summary: Get one form's metrics
+      description: "Returns metrics for one form (views, submissions, abandonments, completion time) over the rangeKey time range (default: last 30 days). Use expand=histogram to get daily buckets."
       parameters:
         - {name: formId, in: path, required: true, schema: {type: string}}
         - {name: formTitle, in: query, schema: {type: string}}
@@ -288,6 +298,7 @@ paths:
       tags: [Web Contents]
       operationId: getWebContents
       summary: List web contents with their metrics
+      description: "Lists web contents with their view metrics, 20 per page, sorted by views in descending order by default. Filter by channel or title keywords, and set the time range with rangeKey (default: last 30 days)."
       parameters:
         - $ref: "#/components/parameters/channelId"
         - $ref: "#/components/parameters/page"
@@ -311,6 +322,7 @@ paths:
       tags: [Web Contents]
       operationId: getWebContent
       summary: Get one web content's metrics
+      description: "Returns metrics for one web content over the rangeKey time range (default: last 30 days). Use expand=histogram to get daily buckets."
       parameters:
         - {name: webContentId, in: path, required: true, schema: {type: string}}
         - {name: webContentTitle, in: query, schema: {type: string}}
@@ -327,6 +339,7 @@ paths:
       tags: [Individuals]
       operationId: getIndividuals
       summary: Search individuals
+      description: "Searches known and anonymous individuals and returns their demographics and custom attributes, 20 per page. Narrow the results with a free-text query or a channel."
       parameters:
         - $ref: "#/components/parameters/channelId"
         - $ref: "#/components/parameters/page"
@@ -364,6 +377,7 @@ paths:
       tags: [Individuals]
       operationId: getIndividual
       summary: Get one individual
+      description: "Returns one individual's demographics and custom attributes, with links to their activities, interests and segments."
       parameters:
         - $ref: "#/components/parameters/individualId"
       responses:
@@ -381,6 +395,7 @@ paths:
       tags: [Individuals]
       operationId: getIndividualActivities
       summary: List an individual's activities (always the last 30 days)
+      description: "Lists an individual's activity events, 20 per page. The time range is always the last 30 days, and you can filter by channel."
       parameters:
         - $ref: "#/components/parameters/individualId"
         - $ref: "#/components/parameters/channelId"
@@ -405,6 +420,7 @@ paths:
       tags: [Individuals]
       operationId: getIndividualInterests
       summary: List an individual's interests
+      description: "Lists an individual's interests, 20 per page. You can filter by channel."
       parameters:
         - $ref: "#/components/parameters/individualId"
         - $ref: "#/components/parameters/channelId"
@@ -429,6 +445,7 @@ paths:
       tags: [Individuals]
       operationId: getIndividualSegments
       summary: List the segments an individual belongs to (not paginated)
+      description: "Returns every segment the individual belongs to in a single response, with no pagination."
       parameters:
         - $ref: "#/components/parameters/individualId"
       responses:
@@ -446,6 +463,7 @@ paths:
       tags: [Segments]
       operationId: getSegments
       summary: List segments
+      description: "Lists segments with their type, creation date and member counts, 20 per page. You can filter by channel."
       parameters:
         - $ref: "#/components/parameters/channelId"
         - $ref: "#/components/parameters/page"
@@ -484,6 +502,7 @@ paths:
       tags: [Segments]
       operationId: getSegment
       summary: Get one segment
+      description: "Returns one segment with its type, creation date and member counts, plus a link to its members."
       parameters:
         - {name: segmentId, in: path, required: true, schema: {type: string}}
       responses:
@@ -501,6 +520,7 @@ paths:
       tags: [Segments]
       operationId: getSegmentIndividuals
       summary: List a segment's members
+      description: "Lists the individuals who belong to a segment, 20 per page. Narrow the results with a free-text query or a channel."
       parameters:
         - {name: segmentId, in: path, required: true, schema: {type: string}}
         - $ref: "#/components/parameters/channelId"
@@ -522,6 +542,8 @@ paths:
       operationId: exportData
       summary: Request or download a bulk data export
       description: |
+        Starts an asynchronous bulk export of one data type for a UTC date range and returns its status. Poll the same URL until it returns the ZIP file; a completed export is reused for one day.
+
         Asynchronous. The first call creates an export task and returns its status as JSON. Poll the **same URL** until the response is `application/zip`. A completed export is reused for one day for the same type and date range.
 
         ```bash
@@ -576,6 +598,7 @@ paths:
       tags: [Recommendations]
       operationId: getRecommendationsIndex
       summary: Recommendations discovery links
+      description: "Returns links to the recommendation resources, starting with the list of recommendation models."
       responses:
         "200":
           description: HATEOAS index.
@@ -590,6 +613,7 @@ paths:
       tags: [Recommendations]
       operationId: getRecommendationModels
       summary: List recommendation models
+      description: "Lists recommendation models, 20 per page, newest first. You can filter by keywords."
       parameters:
         - $ref: "#/components/parameters/page"
         - $ref: "#/components/parameters/keywords"
@@ -613,6 +637,7 @@ paths:
       tags: [Recommendations]
       operationId: getRecommendationModel
       summary: Get one recommendation model
+      description: "Returns one recommendation model."
       parameters:
         - $ref: "#/components/parameters/modelId"
       responses:
@@ -629,6 +654,7 @@ paths:
       tags: [Recommendations]
       operationId: getPageRecommendations
       summary: List a model's page recommendations
+      description: "Lists a model's page recommendations, 20 per page. Returns 409 until the model's status is ready."
       parameters:
         - $ref: "#/components/parameters/modelId"
         - $ref: "#/components/parameters/page"
@@ -652,6 +678,7 @@ paths:
       tags: [Recommendations]
       operationId: getPageRecommendation
       summary: Get one page recommendation
+      description: "Returns one page recommendation from a model, with the page's title, description and keywords when they are known. Returns 409 until the model is ready."
       parameters:
         - $ref: "#/components/parameters/modelId"
         - {name: recommendationId, in: path, required: true, schema: {type: string}}
@@ -669,6 +696,7 @@ paths:
       tags: [Recommendations]
       operationId: findPageRecommendation
       summary: Get the recommendations for a given page URL
+      description: "Returns the page recommendation for a page URL from the model given in the request body. Returns 409 until the model is ready."
       requestBody:
         required: true
         content:

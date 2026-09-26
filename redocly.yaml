@@ -3,3 +3,4 @@ extends:
 rules:
   no-unused-components: error
   tag-description: error
+  operation-description: error
