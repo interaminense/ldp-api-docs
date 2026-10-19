@@ -42,6 +42,59 @@ curl \
 
 The `timeRange` query is the only endpoint that lists the valid `rangeKey` values.
 
+## Call It From a DXP Page
+
+This is how the DEVCON 2026 live demo card asks for a metric. The page is served by DXP, so the call is same-origin: the session cookie travels with it, and `Liferay.authToken` is the CSRF token. No LDP token or host ever reaches the browser.
+
+```javascript
+const response = await fetch('/o/analytics-rest/v1.0/graphql', {
+	body: JSON.stringify({
+		query: `query ($channelId: String!, $rangeKey: Int) {
+			site(channelId: $channelId, interval: "D", rangeKey: $rangeKey) {
+				visitorsMetric {
+					previousValue
+					trend {
+						percentage
+					}
+					value
+				}
+			}
+		}`,
+		variables: {channelId: '<channel-id>', rangeKey: 7},
+	}),
+	headers: {
+		'Content-Type': 'application/json',
+		'x-csrf-token': Liferay.authToken,
+	},
+	method: 'POST',
+});
+
+const {data} = await response.json();
+```
+
+## Without the Proxy
+
+The proxy is a thin pass-through. It forwards the same body to the GraphQL endpoint of the LDP backend and signs the call with the values DXP saved when it was connected to LDP (Instance Settings, Platform, Analytics Cloud). Calling LDP directly would look like this:
+
+```bash
+curl \
+	--data '{"query": "...", "variables": {"channelId": "<channel-id>", "rangeKey": 7}}' \
+	--header "Content-Type: application/json" \
+	--header "OSB-Asah-Data-Source-ID: <data-source-id>" \
+	--header "OSB-Asah-Faro-Backend-Security-Signature: <security-signature>" \
+	--header "OSB-Asah-Project-ID: <project-id>" \
+	"https://<ldp-backend-host>/<graphql-path>"
+```
+
+Do not build on this. The security signature is the secret of the whole workspace: putting it in a browser or a script exposes every LDP property of the project, and LDP does not issue it for integrations. Go through the DXP proxy instead, or use the Public REST API with an access token when you are outside DXP.
+
+| | Through the DXP proxy | Directly to LDP |
+| --- | --- | --- |
+| URL | `https://<dxp-host>/o/analytics-rest/v1.0/graphql` | `https://<ldp-backend-host>/<graphql-path>` |
+| Credentials | A DXP user: session and CSRF token, Basic Auth or OAuth2 | Project ID, data source ID and the workspace signature |
+| Where the secret lives | On the DXP server only | In every client that calls it |
+| Works from a page | Yes, same-origin | No |
+
 ## Conventions
 
 - **Channel:** most queries take a `channelId`. List the channels connected to the DXP with `GET https://<dxp-host>/o/analytics-settings-rest/v1.0/channels`.
