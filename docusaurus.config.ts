@@ -1,6 +1,7 @@
 import type * as Preset from '@docusaurus/preset-classic';
 import type {Config} from '@docusaurus/types';
 import type * as OpenApiPlugin from 'docusaurus-plugin-openapi-docs';
+import {themes} from 'prism-react-renderer';
 
 import {GROUPS, enabledGroups} from './site.config.mjs';
 
@@ -102,6 +103,12 @@ const config: Config = {
 		],
 	],
 	projectName: 'ldp-api-docs',
+	stylesheets: [
+		{
+			href: 'https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600&family=Source+Sans+3:wght@400;500;600;700;800&display=swap',
+			type: 'text/css',
+		},
+	],
 	tagline: 'Unofficial usage guide for the Liferay Data Platform APIs',
 	themeConfig: {
 		footer: {
@@ -126,6 +133,11 @@ const config: Config = {
 		],
 		navbar: {
 			title: TITLE,
+		},
+		prism: {
+			additionalLanguages: ['bash'],
+			darkTheme: themes.vsDark,
+			theme: themes.github,
 		},
 	} satisfies Preset.ThemeConfig,
 	themes: ['docusaurus-theme-openapi-docs'],
