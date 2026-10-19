@@ -10,10 +10,19 @@ const SCHEMA = buildSchema(
 const EXAMPLES_DIR = 'specs/graphql/examples';
 
 const EXPECTED = [
-	'most-active-visitors.graphql',
-	'site-visitors.graphql',
-	'time-range.graphql',
+	'acquisitions.graphql',
+	'demo-metric-card.graphql',
+	'event-breakdown.graphql',
+	'event-definitions.graphql',
+	'individual-metric.graphql',
+	'live-page-views.graphql',
+	'page-views.graphql',
+	'site-metric.graphql',
+	'top-pages.graphql',
+	'traffic-heatmap.graphql',
 	'visit-frequency.graphql',
+	'visitors-behavior.graphql',
+	'visitors-by-device.graphql',
 ];
 
 test('the example set is complete', () => {

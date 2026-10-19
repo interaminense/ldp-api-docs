@@ -1,0 +1,30 @@
+query TopPages($channelId: String!, $rangeKey: Int) {
+	pages(
+		channelId: $channelId
+		rangeKey: $rangeKey
+		size: 8
+		sort: {column: "visitorsMetric", type: DESC}
+		start: 0
+	) {
+		assetMetrics {
+			... on PageMetric {
+				assetTitle
+				bounceRateMetric {
+					value
+				}
+				entrancesMetric {
+					value
+				}
+				exitRateMetric {
+					value
+				}
+				viewsMetric {
+					value
+				}
+				visitorsMetric {
+					value
+				}
+			}
+		}
+	}
+}

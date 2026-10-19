@@ -1,0 +1,33 @@
+query VisitorsBehavior($channelId: String!, $interval: String!, $rangeKey: Int) {
+	site(channelId: $channelId, interval: $interval, rangeKey: $rangeKey) {
+		bounceRateMetric {
+			...BehaviorMetric
+		}
+		sessionDurationMetric {
+			...BehaviorMetric
+		}
+		sessionsMetric {
+			...BehaviorMetric
+		}
+		sessionsPerVisitorMetric {
+			...BehaviorMetric
+		}
+		visitorsMetric {
+			...BehaviorMetric
+		}
+	}
+}
+
+fragment BehaviorMetric on Metric {
+	histogram {
+		metrics {
+			key
+			value
+		}
+	}
+	trend {
+		percentage
+		trendClassification
+	}
+	value
+}

@@ -1,6 +1,5 @@
-query SitesMetricQuery(
+query SiteMetric(
 	$channelId: String!
-	$groupIds: [String]
 	$interval: String!
 	$rangeEnd: String
 	$rangeKey: Int
@@ -8,21 +7,24 @@ query SitesMetricQuery(
 ) {
 	site(
 		channelId: $channelId
-		groupIds: $groupIds
 		interval: $interval
 		rangeEnd: $rangeEnd
 		rangeKey: $rangeKey
 		rangeStart: $rangeStart
 	) {
-		visitorsMetric {
+		sessionsMetric {
 			histogram {
 				metrics {
 					key
 					value
-					valueKey
 				}
-				total
 			}
+			previousValue
+			trend {
+				percentage
+				trendClassification
+			}
+			value
 		}
 	}
 }

@@ -1,0 +1,18 @@
+query EventDefinitions($keyword: String) {
+	eventDefinitions(
+		eventType: CUSTOM
+		keyword: $keyword
+		page: 0
+		size: 10
+		sort: {column: "name", type: ASC}
+	) {
+		eventDefinitions {
+			eventAttributeDefinitions {
+				id
+				name
+			}
+			id
+			name
+		}
+	}
+}

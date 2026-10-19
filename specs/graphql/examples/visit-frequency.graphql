@@ -1,21 +1,8 @@
-query VisitFrequency(
-	$channelId: String!
-	$groupIds: [String]
-	$rangeEnd: String
-	$rangeKey: Int
-	$rangeStart: String
-) {
-	visitFrequency(
-		channelId: $channelId
-		groupIds: $groupIds
-		rangeEnd: $rangeEnd
-		rangeKey: $rangeKey
-		rangeStart: $rangeStart
-	) {
+query VisitFrequency($channelId: String!, $rangeKey: Int) {
+	visitFrequency(channelId: $channelId, rangeKey: $rangeKey) {
 		visitFrequency {
 			count
 			name
 		}
-		totalCount
 	}
 }

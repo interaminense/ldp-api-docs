@@ -1,0 +1,7 @@
+query PageViews($channelId: String, $rangeKey: Int, $url: String) {
+	page(canonicalUrl: $url, channelId: $channelId, rangeKey: $rangeKey) {
+		viewsMetric {
+			value
+		}
+	}
+}

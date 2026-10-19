@@ -1,0 +1,10 @@
+query VisitorsByDevice($channelId: String!, $rangeKey: Int) {
+	site(channelId: $channelId, rangeKey: $rangeKey) {
+		visitorsMetric {
+			device {
+				value
+				valueKey
+			}
+		}
+	}
+}

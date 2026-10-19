@@ -1,0 +1,11 @@
+query DemoMetricCard($channelId: String!, $rangeKey: Int) {
+	site(channelId: $channelId, interval: "D", rangeKey: $rangeKey) {
+		visitorsMetric {
+			previousValue
+			trend {
+				percentage
+			}
+			value
+		}
+	}
+}

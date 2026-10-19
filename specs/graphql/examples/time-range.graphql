@@ -1,9 +1,0 @@
-query TimeRange {
-	timeRange {
-		default
-		endLocalDateTime
-		key
-		rangeKey
-		startLocalDateTime
-	}
-}

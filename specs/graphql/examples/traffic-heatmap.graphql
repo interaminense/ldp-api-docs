@@ -1,0 +1,7 @@
+query TrafficHeatmap($channelId: String!, $rangeKey: Int) {
+	siteVisitorHeatMap(channelId: $channelId, rangeKey: $rangeKey, timeZoneId: "UTC") {
+		colDimension
+		rowDimension
+		value
+	}
+}

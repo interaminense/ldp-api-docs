@@ -2,70 +2,70 @@
 title: Examples
 ---
 
-**Unofficial.** Each query below is validated against the captured schema by the test suite, and was run against a connected DXP when it was added. They are real queries sent by DXP features.
+**Unofficial.** These are the queries that run in the DEVCON 2026 live demo and in the Swell Lab client extensions, as they are sent today. Each one is validated against the captured schema by the test suite.
 
-Send each one to `https://<dxp-host>/o/analytics-rest/v1.0/graphql` as described in the [overview](/graphql/overview):
+Send each one to `https://<dxp-host>/o/analytics-rest/v1.0/graphql` as described in [Get Started](/graphql/overview). Every query takes the `channelId` of an LDP property; most also take a `rangeKey` such as `7` (last 7 days) or `0` (last 24 hours).
 
-```bash
-curl \
-	--data '{"query": "<query>", "variables": {"channelId": "<channel-id>", "rangeKey": 30}}' \
-	--header "Content-Type: application/json" \
-	--user "user@example.com:YOUR_PASSWORD" \
-	"https://<dxp-host>/o/analytics-rest/v1.0/graphql"
-```
+## Live Demo
 
-## Time Ranges
+### Metric Card
 
-Lists the valid `rangeKey` values. Takes no variables.
+One site metric with its value, the value of the previous period, and the trend. The demo card swaps `visitorsMetric` for `sessionsMetric` when the user picks another metric.
+
+*Used in: the DEVCON demo card, `ldp-demo-card`.*
 
 ```graphql
-query TimeRange {
-	timeRange {
-		default
-		endLocalDateTime
-		key
-		rangeKey
-		startLocalDateTime
-	}
-}
-```
-
-## Visit Frequency
-
-How often visitors come back.
-
-```graphql
-query VisitFrequency(
-	$channelId: String!
-	$groupIds: [String]
-	$rangeEnd: String
-	$rangeKey: Int
-	$rangeStart: String
-) {
-	visitFrequency(
-		channelId: $channelId
-		groupIds: $groupIds
-		rangeEnd: $rangeEnd
-		rangeKey: $rangeKey
-		rangeStart: $rangeStart
-	) {
-		visitFrequency {
-			count
-			name
+query DemoMetricCard($channelId: String!, $rangeKey: Int) {
+	site(channelId: $channelId, interval: "D", rangeKey: $rangeKey) {
+		visitorsMetric {
+			previousValue
+			trend {
+				percentage
+			}
+			value
 		}
-		totalCount
 	}
 }
 ```
 
-## Visitors Over Time
+## Swell Lab: Live Page Views
 
-A histogram of visitors for the given sites. `interval` is a bucket size such as `D` (day).
+### Page Views, Last 24 Hours
+
+The views of one page by hour, plus its visitors. `url` is the canonical URL of the page the visitor is on. The script polls it every 30 seconds.
+
+*Used in: the `ldp-live-views` global script.*
 
 ```graphql
-query SitesMetricQuery(
+query LivePageViews($channelId: String, $url: String) {
+	page(canonicalUrl: $url, channelId: $channelId, rangeKey: 0) {
+		viewsMetric {
+			histogram {
+				metrics {
+					key
+					value
+				}
+			}
+			value
+		}
+		visitorsMetric {
+			value
+		}
+	}
+}
+```
+
+## Swell Lab: Custom Dashboard
+
+### Site Metric Over Time
+
+Any site metric as a value, a trend and a histogram. The card swaps `sessionsMetric` for the metric the user picks: `visitorsMetric`, `anonymousVisitorsMetric`, `knownVisitorsMetric`, `bounceRateMetric`, `sessionDurationMetric` or `sessionsPerVisitorMetric`. Pass `rangeStart` and `rangeEnd` instead of `rangeKey` for a custom period.
+
+*Used in: the `ldp-metric-card` widget.*
+
+```graphql
+query SiteMetric(
 	$channelId: String!
-	$groupIds: [String]
 	$interval: String!
 	$rangeEnd: String
 	$rangeKey: Int
@@ -73,57 +73,293 @@ query SitesMetricQuery(
 ) {
 	site(
 		channelId: $channelId
-		groupIds: $groupIds
 		interval: $interval
 		rangeEnd: $rangeEnd
 		rangeKey: $rangeKey
 		rangeStart: $rangeStart
 	) {
-		visitorsMetric {
+		sessionsMetric {
 			histogram {
 				metrics {
 					key
 					value
-					valueKey
 				}
-				total
+			}
+			previousValue
+			trend {
+				percentage
+				trendClassification
+			}
+			value
+		}
+	}
+}
+```
+
+### Individuals Over Time
+
+The same shape for individuals. The card swaps `knownIndividualsMetric` for `totalIndividualsMetric` or `anonymousIndividualsMetric`.
+
+*Used in: the `ldp-metric-card` widget.*
+
+```graphql
+query IndividualMetric($channelId: String!, $interval: String!, $rangeKey: Int) {
+	individualMetric(channelId: $channelId, interval: $interval, rangeKey: $rangeKey) {
+		knownIndividualsMetric {
+			histogram {
+				metrics {
+					key
+					value
+				}
+			}
+			previousValue
+			trend {
+				percentage
+				trendClassification
+			}
+			value
+		}
+	}
+}
+```
+
+### Acquisition
+
+Visitors by acquisition channel. Use `REFERRER` or `SOURCE_MEDIUM` as `acquisitionType` for the other splits. `searchTerms` and `siteInterests` return the same `compositions` shape.
+
+*Used in: the `ldp-metric-card` widget.*
+
+```graphql
+query Acquisitions($channelId: String!, $rangeKey: Int) {
+	acquisitions(
+		acquisitionType: CHANNEL
+		channelId: $channelId
+		rangeKey: $rangeKey
+		size: 10
+		start: 0
+	) {
+		compositions {
+			count
+			name
+		}
+		total
+	}
+}
+```
+
+### Visitors by Device
+
+Visitors split by device. Use `browser` instead of `device` to split by browser.
+
+*Used in: the `ldp-metric-card` widget.*
+
+```graphql
+query VisitorsByDevice($channelId: String!, $rangeKey: Int) {
+	site(channelId: $channelId, rangeKey: $rangeKey) {
+		visitorsMetric {
+			device {
+				value
+				valueKey
 			}
 		}
 	}
 }
 ```
 
-## Most Active Visitors
+### Visit Frequency
 
-The visitors with the most activities, paginated with `start` and `size`.
+How often visitors come back.
+
+*Used in: the `ldp-metric-card` widget.*
 
 ```graphql
-query MostActiveVisitors(
-	$channelId: String!
-	$groupIds: [String]
-	$rangeEnd: String
-	$rangeKey: Int
-	$rangeStart: String
-	$size: Int!
-	$start: Int!
-) {
-	mostActiveVisitors(
-		channelId: $channelId
-		groupIds: $groupIds
-		rangeEnd: $rangeEnd
-		rangeKey: $rangeKey
-		rangeStart: $rangeStart
-		size: $size
-		start: $start
-	) {
-		mostActiveVisitors {
-			activitiesCount
-			emailAddress
-			firstName
-			id
-			lastName
+query VisitFrequency($channelId: String!, $rangeKey: Int) {
+	visitFrequency(channelId: $channelId, rangeKey: $rangeKey) {
+		visitFrequency {
+			count
+			name
 		}
-		total
+	}
+}
+```
+
+### Traffic Heatmap
+
+Visitors by day of the week and hour of the day.
+
+*Used in: the `ldp-metric-card` widget.*
+
+```graphql
+query TrafficHeatmap($channelId: String!, $rangeKey: Int) {
+	siteVisitorHeatMap(channelId: $channelId, rangeKey: $rangeKey, timeZoneId: "UTC") {
+		colDimension
+		rowDimension
+		value
+	}
+}
+```
+
+### Top Pages
+
+The pages with the most visitors, with their views, entrances, bounce rate and exit rate.
+
+*Used in: the `ldp-metric-card` widget.*
+
+```graphql
+query TopPages($channelId: String!, $rangeKey: Int) {
+	pages(
+		channelId: $channelId
+		rangeKey: $rangeKey
+		size: 8
+		sort: {column: "visitorsMetric", type: DESC}
+		start: 0
+	) {
+		assetMetrics {
+			... on PageMetric {
+				assetTitle
+				bounceRateMetric {
+					value
+				}
+				entrancesMetric {
+					value
+				}
+				exitRateMetric {
+					value
+				}
+				viewsMetric {
+					value
+				}
+				visitorsMetric {
+					value
+				}
+			}
+		}
+	}
+}
+```
+
+### Visitors Behavior
+
+Five site metrics in one request, each with its trend and histogram. `interval` is `H` (hour) for the last 24 hours and `D` (day) otherwise.
+
+*Used in: the `ldp-visitors-behavior` widget.*
+
+```graphql
+query VisitorsBehavior($channelId: String!, $interval: String!, $rangeKey: Int) {
+	site(channelId: $channelId, interval: $interval, rangeKey: $rangeKey) {
+		bounceRateMetric {
+			...BehaviorMetric
+		}
+		sessionDurationMetric {
+			...BehaviorMetric
+		}
+		sessionsMetric {
+			...BehaviorMetric
+		}
+		sessionsPerVisitorMetric {
+			...BehaviorMetric
+		}
+		visitorsMetric {
+			...BehaviorMetric
+		}
+	}
+}
+
+fragment BehaviorMetric on Metric {
+	histogram {
+		metrics {
+			key
+			value
+		}
+	}
+	trend {
+		percentage
+		trendClassification
+	}
+	value
+}
+```
+
+## Swell Lab: Blogs
+
+### Custom Event Definitions
+
+Finds a custom event and the ids of its attributes by name, for example `surfBlogPostClicked` and its `postId` attribute.
+
+*Used in: the Content Advisor and the Next posts widget.*
+
+```graphql
+query EventDefinitions($keyword: String) {
+	eventDefinitions(
+		eventType: CUSTOM
+		keyword: $keyword
+		page: 0
+		size: 10
+		sort: {column: "name", type: ASC}
+	) {
+		eventDefinitions {
+			eventAttributeDefinitions {
+				id
+				name
+			}
+			id
+			name
+		}
+	}
+}
+```
+
+### Clicks per Post
+
+Counts a custom event and breaks it down by one of its attributes, here the post id. LDP returns the attribute values in lower case.
+
+*Used in: the Content Advisor and the Next posts widget.*
+
+```graphql
+query EventBreakdown(
+	$attributeId: String!
+	$channelId: String!
+	$eventDefinitionId: String!
+	$rangeKey: Int
+) {
+	eventAnalysisResult(
+		analysisType: TOTAL
+		channelId: $channelId
+		compareToPrevious: false
+		eventAnalysisBreakdowns: [
+			{
+				attributeId: $attributeId
+				attributeType: EVENT
+				dataType: STRING
+				displayName: "postId"
+				sortType: DESC
+			}
+		]
+		eventDefinitionId: $eventDefinitionId
+		page: 0
+		rangeKey: $rangeKey
+		size: 50
+	) {
+		breakdownItems {
+			name
+			value
+		}
+	}
+}
+```
+
+### Page Views
+
+The views of one page, such as `/blog`, over the period.
+
+*Used in: the Content Advisor and the Next posts widget.*
+
+```graphql
+query PageViews($channelId: String, $rangeKey: Int, $url: String) {
+	page(canonicalUrl: $url, channelId: $channelId, rangeKey: $rangeKey) {
+		viewsMetric {
+			value
+		}
 	}
 }
 ```

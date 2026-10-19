@@ -1,0 +1,30 @@
+query EventBreakdown(
+	$attributeId: String!
+	$channelId: String!
+	$eventDefinitionId: String!
+	$rangeKey: Int
+) {
+	eventAnalysisResult(
+		analysisType: TOTAL
+		channelId: $channelId
+		compareToPrevious: false
+		eventAnalysisBreakdowns: [
+			{
+				attributeId: $attributeId
+				attributeType: EVENT
+				dataType: STRING
+				displayName: "postId"
+				sortType: DESC
+			}
+		]
+		eventDefinitionId: $eventDefinitionId
+		page: 0
+		rangeKey: $rangeKey
+		size: 50
+	) {
+		breakdownItems {
+			name
+			value
+		}
+	}
+}

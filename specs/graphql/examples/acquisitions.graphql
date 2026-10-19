@@ -1,0 +1,15 @@
+query Acquisitions($channelId: String!, $rangeKey: Int) {
+	acquisitions(
+		acquisitionType: CHANNEL
+		channelId: $channelId
+		rangeKey: $rangeKey
+		size: 10
+		start: 0
+	) {
+		compositions {
+			count
+			name
+		}
+		total
+	}
+}

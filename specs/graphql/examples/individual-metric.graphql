@@ -1,0 +1,18 @@
+query IndividualMetric($channelId: String!, $interval: String!, $rangeKey: Int) {
+	individualMetric(channelId: $channelId, interval: $interval, rangeKey: $rangeKey) {
+		knownIndividualsMetric {
+			histogram {
+				metrics {
+					key
+					value
+				}
+			}
+			previousValue
+			trend {
+				percentage
+				trendClassification
+			}
+			value
+		}
+	}
+}

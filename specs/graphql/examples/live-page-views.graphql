@@ -1,0 +1,16 @@
+query LivePageViews($channelId: String, $url: String) {
+	page(canonicalUrl: $url, channelId: $channelId, rangeKey: 0) {
+		viewsMetric {
+			histogram {
+				metrics {
+					key
+					value
+				}
+			}
+			value
+		}
+		visitorsMetric {
+			value
+		}
+	}
+}
